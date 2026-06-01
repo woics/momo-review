@@ -74,7 +74,7 @@
       font-weight: 600;
     }
     .btn-primary:hover { 
-      opacity: 0.9; border-color: transparent; transform: translateY(-1px);
+      background: var(--text); color: var(--bg); opacity: 0.85; border-color: transparent; transform: translateY(-1px);
     }
     .btn-primary svg { color: var(--bg); }
 
@@ -151,6 +151,7 @@
     .page-btn { background: var(--surface); border: 1px solid var(--border); color: var(--muted); width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border-radius: 4px; cursor: pointer; transition: all 0.2s; font-size: 0.85rem; font-weight: 500; }
     .page-btn:hover:not(:disabled) { background: var(--surface2); color: var(--text); border-color: var(--border-h); }
     .page-btn.active { background: var(--text); border-color: var(--text); color: var(--bg); }
+    .page-btn.active:hover { background: var(--text); border-color: var(--text); color: var(--bg); opacity: 0.9; }
     .page-btn:disabled { opacity: 0.3; cursor: not-allowed; }
     
     .category-tabs { display: flex; gap: 0.5rem; overflow-x: auto; padding-bottom: 2px; }
@@ -676,9 +677,9 @@
       data: {
         labels,
         datasets: [
-          { label: '5 Estrellas', data: data5, backgroundColor: '#f59e0b', borderRadius: 4, borderSkipped: false, maxBarThickness: 32 },
-          { label: '4 Estrellas', data: data4, backgroundColor: '#f97316', borderRadius: 4, borderSkipped: false, maxBarThickness: 32 },
-          ...(includeIndirect ? [{ label: 'Mesa Compartida', data: dataIndirect, backgroundColor: '#3b82f6', borderRadius: 4, borderSkipped: false, maxBarThickness: 32 }] : [])
+          { type: 'bar', label: '5 Estrellas', data: data5, backgroundColor: '#f59e0b', borderRadius: 4, borderSkipped: false, maxBarThickness: 32, yAxisID: 'y' },
+          { type: 'bar', label: '4 Estrellas', data: data4, backgroundColor: '#ea580c', borderRadius: 4, borderSkipped: false, maxBarThickness: 32, yAxisID: 'y' },
+          ...(includeIndirect ? [{ type: 'line', label: 'Mesa Compartida', data: dataIndirect, borderColor: '#3b82f6', backgroundColor: '#3b82f6', tension: 0.3, borderWidth: 2, pointBackgroundColor: '#3b82f6', pointRadius: 4, yAxisID: 'y1' }] : [])
         ]
       },
       options: {
@@ -690,7 +691,18 @@
         },
         scales: {
           x: { stacked: true, grid: { display: false }, border: { display: false }, ticks: { color: cMuted, font: { size: 10, family: 'Inter' } } },
-          y: { stacked: true, beginAtZero: true, grid: { color: cBorder, drawBorder: false }, border: { display: false }, ticks: { color: cMuted, font: { size: 10, family: 'Inter' }, stepSize: 1, padding: 8 } }
+          y: { 
+            type: 'linear', display: true, position: 'left',
+            stacked: true, beginAtZero: true, grid: { color: cBorder, drawBorder: false }, border: { display: false }, ticks: { color: cMuted, font: { size: 10, family: 'Inter' }, stepSize: 1, padding: 8 },
+            title: { display: true, text: 'Reseñas por Estrellas', color: cMuted, font: { size: 10 } }
+          },
+          ...(includeIndirect ? {
+            y1: {
+              type: 'linear', display: true, position: 'right',
+              beginAtZero: true, grid: { drawOnChartArea: false }, border: { display: false }, ticks: { color: cMuted, font: { size: 10, family: 'Inter' }, stepSize: 1, padding: 8 },
+              title: { display: true, text: 'Mesa Compartida', color: cMuted, font: { size: 10 } }
+            }
+          } : {})
         }
       }
     });
