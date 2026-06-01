@@ -1,0 +1,7 @@
+node_modules
+reviews.json
+*.log
+.env
+screenshots/
+body.html
+body2.html

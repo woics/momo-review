@@ -1,0 +1,955 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reportes — Momo Review</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <style>
+    :root {
+      --bg: #fcfcfc;
+      --surface: #ffffff;
+      --surface2: #f4f4f5;
+      --border: #e4e4e7;
+      --border-h: #d4d4d8;
+      --accent: #4f46e5;
+      --text: #09090b;
+      --muted: #71717a;
+      --muted2: #a1a1aa;
+      --r: 8px;
+      --rs: 6px;
+      
+      --blue: #3b82f6;
+      --purple: #8b5cf6;
+      --green: #10b981;
+      --yellow: #f59e0b;
+      --orange: #f97316;
+      --red: #ef4444;
+    }
+    html[data-theme="dark"] {
+      --bg: #08080a;
+      --surface: #121216;
+      --surface2: #16161f;
+      --border: #1e1e28;
+      --border-h: #313145;
+      --accent: #6366f1;
+      --text: #f4f4f7;
+      --muted: #8a8a9e;
+      --muted2: #5c5c6f;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', system-ui, sans-serif; }
+    body { background: var(--bg); color: var(--text); min-height: 100vh; -webkit-font-smoothing: antialiased; }
+    
+    /* Print Base */
+    @media print {
+      .no-print { display: none !important; }
+      body { background: #fff; color: #000; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      .app { max-width: 100% !important; padding: 0 !important; }
+    }
+
+    /* Layout */
+    .app { max-width: 1080px; margin: 0 auto; padding: 2.5rem 2rem; display: flex; flex-direction: column; gap: 2rem; }
+
+    /* Header */
+    .header { display: flex; align-items: flex-start; justify-content: space-between; flex-wrap: wrap; gap: 1rem; margin-bottom: 0.5rem; }
+    .header-left { display: flex; flex-direction: column; gap: 8px; }
+    .back-link { display: inline-flex; align-items: center; gap: 6px; color: var(--muted); font-size: 0.85rem; font-weight: 500; text-decoration: none; transition: color 0.2s; }
+    .back-link:hover { color: var(--text); }
+    h1 { font-size: 1.75rem; font-weight: 600; letter-spacing: -0.02em; color: var(--text); }
+    .subtitle { color: var(--muted); font-size: 0.85rem; }
+    
+    .header-actions { display: flex; gap: 0.5rem; align-items: center; }
+    .btn { 
+      display: inline-flex; align-items: center; gap: 6px; 
+      border-radius: var(--rs); padding: 0.5rem 0.875rem; 
+      font-size: 0.85rem; font-weight: 500; cursor: pointer; 
+      border: 1px solid var(--border); background: var(--surface); color: var(--text); 
+      transition: all 0.2s ease; outline: none;
+    }
+    .btn:hover { border-color: var(--border-h); background: var(--surface2); }
+    .btn:focus-visible { border-color: var(--accent); }
+    .btn-primary { 
+      background: var(--text); color: var(--bg); border-color: transparent; 
+      font-weight: 600;
+    }
+    .btn-primary:hover { 
+      opacity: 0.9; border-color: transparent; transform: translateY(-1px);
+    }
+    .btn-primary svg { color: var(--bg); }
+
+    /* Cards */
+    .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r); padding: 1.5rem; box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
+    .card-title { font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); margin-bottom: 1.25rem; display: block; }
+
+    /* KPIs */
+    .kpis { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1rem; }
+    .kpi { 
+      background: var(--surface); border: 1px solid var(--border); 
+      border-radius: var(--rs); padding: 1.25rem; 
+      display: flex; flex-direction: column; gap: 8px; 
+      transition: transform 0.2s, border-color 0.2s; position: relative;
+    }
+    .kpi::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; border-top-left-radius: var(--rs); border-top-right-radius: var(--rs); }
+    .kpi.yellow::before { background: var(--yellow); }
+    .kpi.green::before { background: var(--green); }
+    .kpi.purple::before { background: var(--purple); }
+    .kpi.blue::before { background: var(--blue); }
+    .kpi:hover { border-color: var(--border-h); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.08); }
+    .kpi-label { font-size: 0.75rem; font-weight: 500; color: var(--muted); }
+    .kpi-num { font-size: 2.25rem; font-weight: 600; letter-spacing: -0.03em; line-height: 1; color: var(--text); font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; }
+    .kpi-sub { font-size: 0.75rem; color: var(--muted2); }
+
+    /* Goals */
+    .goals { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    @media (max-width: 600px) { .goals { grid-template-columns: 1fr; } }
+    .goal-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r); padding: 1.5rem; display: flex; flex-direction: column; gap: 1rem; }
+    .goal-header { display: flex; align-items: center; justify-content: space-between; }
+    .goal-title { font-size: 0.875rem; font-weight: 600; color: var(--text); }
+    .goal-badge { font-size: 0.7rem; padding: 2px 8px; border-radius: 4px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; }
+    .badge-green { background: rgba(16,185,129,0.1); color: var(--green); border: 1px solid rgba(16,185,129,0.2); }
+    .badge-yellow { background: rgba(245,158,11,0.1); color: var(--yellow); border: 1px solid rgba(245,158,11,0.2); }
+    .badge-red { background: rgba(239,68,68,0.1); color: var(--red); border: 1px solid rgba(239,68,68,0.2); }
+    .goal-numbers { display: flex; align-items: baseline; gap: 6px; }
+    .goal-current { font-size: 2rem; font-weight: 600; letter-spacing: -0.02em; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; }
+    .goal-target { font-size: 0.875rem; color: var(--muted); font-weight: 500; }
+    .progress-track { height: 4px; background: var(--surface2); border-radius: 2px; overflow: hidden; }
+    .progress-fill { height: 100%; border-radius: 2px; transition: width 1s ease; }
+    .fill-green { background: var(--green); }
+    .fill-yellow { background: var(--yellow); }
+    .fill-red { background: var(--red); }
+    .fill-blue { background: var(--accent); }
+    .goal-projection { font-size: 0.75rem; color: var(--muted); }
+    .goal-projection span { color: var(--text); font-weight: 500; }
+
+    /* Period tabs */
+    .period-tabs { display: flex; gap: 0.25rem; background: var(--surface); padding: 2px; border-radius: 6px; border: 1px solid var(--border); }
+    .period-tab { background: transparent; border: none; color: var(--muted); border-radius: 4px; padding: 0.35rem 0.75rem; font-size: 0.75rem; font-weight: 500; cursor: pointer; transition: all 0.2s; }
+    .period-tab:hover { color: var(--text); }
+    .period-tab.active { background: var(--border); color: var(--text); box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+
+    /* Chart */
+    .chart-header { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.75rem; margin-bottom: 1.5rem; }
+    .chart-wrap { position: relative; height: 240px; }
+
+    /* Momo reviews */
+    .momo-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1rem; }
+    .review-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--rs); padding: 1.25rem; display: flex; flex-direction: column; gap: 0.875rem; transition: all 0.2s ease; cursor: pointer; text-decoration: none; color: inherit; }
+    .review-card:hover { border-color: var(--border-h); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.12); }
+    .review-top { display: flex; align-items: center; justify-content: space-between; }
+    .avatar { width: 28px; height: 28px; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600; color: white; flex-shrink: 0; box-shadow: inset 0 0 0 1px rgba(255,255,255,0.1); }
+    .review-author { font-size: 0.85rem; font-weight: 500; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 150px; }
+    .stars { display: flex; gap: 2px; }
+    .star { width: 12px; height: 12px; fill: var(--yellow); }
+    .review-text { font-size: 0.85rem; color: var(--muted); line-height: 1.6; }
+    .review-text mark { background: rgba(245,158,11,0.15); color: var(--yellow); border-radius: 2px; padding: 0 3px; font-weight: 500; }
+    .review-date { font-size: 0.75rem; color: var(--muted2); margin-top: auto; padding-top: 0.5rem; border-top: 1px solid var(--border); }
+    
+    .empty-state { text-align: center; padding: 3rem; color: var(--muted); font-size: 0.85rem; border: 1px dashed var(--border); border-radius: var(--rs); background: var(--surface); }
+    
+    .pagination { display: flex; justify-content: center; gap: 0.35rem; margin-top: 2rem; align-items: center; }
+    .page-btn { background: var(--surface); border: 1px solid var(--border); color: var(--muted); width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border-radius: 4px; cursor: pointer; transition: all 0.2s; font-size: 0.85rem; font-weight: 500; }
+    .page-btn:hover:not(:disabled) { background: var(--surface2); color: var(--text); border-color: var(--border-h); }
+    .page-btn.active { background: var(--text); border-color: var(--text); color: var(--bg); }
+    .page-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+    
+    .category-tabs { display: flex; gap: 0.5rem; overflow-x: auto; padding-bottom: 2px; }
+    .category-tab { background: var(--surface); border: 1px dashed var(--border); color: var(--muted); border-radius: 4px; padding: 0.35rem 0.75rem; font-size: 0.75rem; font-weight: 500; cursor: pointer; transition: all 0.2s; white-space: nowrap; }
+    .category-tab:hover { border-style: solid; color: var(--text); border-color: var(--border-h); }
+    .category-tab.active { background: rgba(245,158,11,0.08); border: 1px solid rgba(245,158,11,0.3); color: var(--yellow); }
+    
+    /* Toggle Switch */
+    .toggle-switch {
+      position: relative; width: 34px; height: 18px; appearance: none;
+      background: var(--surface2); border-radius: 20px; border: 1px solid var(--border-h);
+      outline: none; cursor: pointer; transition: background 0.3s;
+    }
+    .toggle-switch::after {
+      content: ''; position: absolute; top: 1px; left: 1px;
+      width: 14px; height: 14px; background: var(--muted); border-radius: 50%; transition: 0.3s;
+    }
+    .toggle-switch:checked { background: var(--accent); border-color: var(--accent); }
+    .toggle-switch:checked::after { left: 17px; background: #fff; }
+
+    /* Tooltip */
+    .info-icon-wrap { position: relative; display: inline-flex; cursor: help; margin-left: auto; margin-bottom: 2px; }
+    .info-icon-wrap svg { transition: stroke 0.2s; }
+    .info-icon-wrap:hover svg { stroke: var(--text); }
+    .info-icon-wrap .tooltip {
+      position: absolute; bottom: 100%; right: 0; margin-bottom: 8px; width: 220px;
+      padding: 10px 12px; background: var(--text); color: var(--bg); font-size: 0.7rem;
+      line-height: 1.4; border-radius: 6px; opacity: 0; pointer-events: none;
+      transform: translateY(4px); transition: all 0.2s; box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+      z-index: 10; font-weight: normal; text-align: left; letter-spacing: 0;
+    }
+    .info-icon-wrap:hover .tooltip { opacity: 1; transform: translateY(0); }
+
+    /* Print Styles Overrides */
+    .print-only { display: none; }
+    @media print {
+      .app { gap: 1.5rem; }
+      .header-actions, .period-tabs, .pagination, .category-tabs, .momo-grid { display: none !important; }
+      
+      .goal-card, .kpi, .card { border: 1px solid #e5e7eb !important; background: #fff !important; color: #000 !important; box-shadow: none !important; }
+      .kpi-label, .kpi-sub, .goal-target, .goal-projection, .goal-projection span, .card-title, .subtitle { color: #4b5563 !important; }
+      .kpi-num, .goal-current, h1, .goal-title { color: #111827 !important; }
+      .kpi::before { display: none !important; }
+      .progress-track { background: #e5e7eb !important; }
+      .goal-badge { border-color: #d1d5db !important; }
+      .badge-green { background: #ecfdf5 !important; color: #059669 !important; border-color: #a7f3d0 !important; }
+      .badge-yellow { background: #fffbeb !important; color: #d97706 !important; border-color: #fde68a !important; }
+      .badge-red { background: #fef2f2 !important; color: #dc2626 !important; border-color: #fecaca !important; }
+      
+      .print-only { display: block !important; page-break-before: always; }
+      .print-header { border-bottom: 1px solid #e5e7eb; padding-bottom: 0.5rem; margin-bottom: 1rem; margin-top: 1rem; }
+      .print-header h2 { font-size: 1.25rem; font-weight: 600; color: #111827; }
+      
+      .print-reviews-table { width: 100%; border-collapse: collapse; font-size: 0.75rem; }
+      .print-reviews-table th, .print-reviews-table td { border-bottom: 1px solid #e5e7eb; padding: 0.75rem 0.5rem; text-align: left; vertical-align: top; }
+      .print-reviews-table th { font-weight: 600; color: #4b5563; text-transform: uppercase; letter-spacing: 0.05em; font-size: 0.65rem; }
+      .print-reviews-table td { color: #111827; }
+      .print-reviews-table a { color: #111827; text-decoration: none; }
+      .print-reviews-table .stars-text { color: #d97706; font-family: monospace; letter-spacing: 1px; }
+    }
+  </style>
+  <script>
+    // Inicializar tema de inmediato para evitar flashes
+    (function() {
+      const saved = localStorage.getItem('theme');
+      const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+      if (saved === 'dark' || (!saved && prefersDark)) {
+        document.documentElement.setAttribute('data-theme', 'dark');
+      } else {
+        document.documentElement.setAttribute('data-theme', 'light');
+      }
+    })();
+  </script>
+</head>
+<body>
+<div class="app">
+
+  <!-- Header -->
+  <div class="header">
+    <div class="header-left">
+      <a href="/" class="back-link no-print">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 12L6 8l4-4"/></svg>
+        Volver al asistente
+      </a>
+      <h1>Dashboard de Reportes</h1>
+      <p class="subtitle" id="report-subtitle">Cargando datos...</p>
+    </div>
+    <div class="header-actions no-print">
+      <button class="btn" id="theme-toggle" title="Alternar modo oscuro/claro">
+        <svg id="theme-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+      </button>
+      <select id="report-month" class="btn" style="appearance: none; padding-right: 1rem; outline: none; background: var(--surface); color: var(--text);">
+        <option value="all">Histórico Completo</option>
+      </select>
+      <button class="btn" id="refresh-btn">
+        <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 8a6 6 0 11-1.2-3.6M14 2v4h-4"/></svg>
+        Actualizar
+      </button>
+      <button class="btn btn-primary" onclick="window.print()">
+        <svg width="13" height="13" viewBox="0 0 16 16" fill="currentColor"><path d="M4 2h8v4H4zM2 7h12a1 1 0 011 1v5H1V8a1 1 0 011-1zM4 11h8v3H4z"/></svg>
+        Exportar PDF
+      </button>
+    </div>
+  </div>
+
+  <!-- KPIs -->
+  <div class="kpis">
+    <div class="kpi yellow">
+      <span class="kpi-label">Mencionan "Momo"</span>
+      <span class="kpi-num" id="kpi-momo">—</span>
+      <span class="kpi-sub">reseñas con mi nombre</span>
+    </div>
+    <div class="kpi green">
+      <span class="kpi-label">5 Estrellas</span>
+      <span class="kpi-num" id="kpi-five">—</span>
+      <span class="kpi-sub">reseñas excelentes</span>
+    </div>
+    <div class="kpi purple">
+      <span class="kpi-label">4 Estrellas</span>
+      <span class="kpi-num" id="kpi-four">—</span>
+      <span class="kpi-sub">reseñas muy buenas</span>
+    </div>
+    <div class="kpi blue" style="cursor:pointer; border-style:dashed;" id="kpi-indirect-card" title="Clic para incluir/excluir estas reseñas en los cálculos">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: -10px;">
+        <span class="kpi-label">Mesa Compartida</span>
+        <input type="checkbox" id="toggle-indirect" class="toggle-switch" style="pointer-events:none;" title="Alternar mesa compartida">
+      </div>
+      <span class="kpi-num" id="kpi-indirect">—</span>
+      <div style="display:flex; justify-content:space-between; align-items:flex-end; gap:8px;">
+        <span class="kpi-sub" style="line-height:1.4; color:var(--muted2); font-size:0.7rem;">Reseñas de acompañantes en mi mesa.<br><strong style="color:var(--muted);">Clic para sumarlas a mis metas.</strong></span>
+        <div class="info-icon-wrap">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--muted2)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="16" x2="12" y2="12"></line>
+            <line x1="12" y1="8" x2="12.01" y2="8"></line>
+          </svg>
+          <div class="tooltip">Las reseñas de <strong>Mesa Compartida</strong> son aquellas que no incluyen mi nombre de forma explícita, pero que por su proximidad horaria sabemos que provienen de una mesa atendida por mí. Esta función suma esas valoraciones de 4-5 estrellas a mis metas.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Metas -->
+  <div>
+    <div class="card-title" style="padding-left:4px;margin-bottom:0.75rem;">🎯 Seguimiento de Metas</div>
+    <div class="goals">
+      <div class="goal-card" id="weekly-goal">
+        <div class="goal-header">
+          <span class="goal-title">Meta Semanal</span>
+          <span class="goal-badge" id="weekly-badge">—</span>
+        </div>
+        <div>
+          <div class="goal-numbers">
+            <span class="goal-current" id="weekly-current">—</span>
+            <span class="goal-target">/ 20–30 reseñas</span>
+          </div>
+          <div style="font-size:11px;color:var(--muted);margin-top:2px;">esta semana (lun–dom)</div>
+        </div>
+        <div class="progress-track">
+          <div class="progress-fill" id="weekly-bar" style="width:0%"></div>
+        </div>
+        <div class="goal-projection" id="weekly-proj">—</div>
+      </div>
+
+      <div class="goal-card" id="monthly-goal">
+        <div class="goal-header">
+          <span class="goal-title">Meta Mensual</span>
+          <span class="goal-badge" id="monthly-badge">—</span>
+        </div>
+        <div>
+          <div class="goal-numbers">
+            <span class="goal-current" id="monthly-current">—</span>
+            <span class="goal-target">/ 80–120 reseñas</span>
+          </div>
+          <div style="font-size:11px;color:var(--muted);margin-top:2px;">este mes</div>
+        </div>
+        <div class="progress-track">
+          <div class="progress-fill" id="monthly-bar" style="width:0%"></div>
+        </div>
+        <div class="goal-projection" id="monthly-proj">—</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Gráfico temporal -->
+  <div class="card">
+    <div class="chart-header">
+      <span class="card-title" style="margin-bottom:0;">📈 Evolución de Reseñas</span>
+      <div class="period-tabs no-print">
+        <button class="period-tab active" data-period="daily">Diario</button>
+        <button class="period-tab" data-period="weekly">Semanal</button>
+        <button class="period-tab" data-period="monthly">Mensual</button>
+      </div>
+    </div>
+    <div class="chart-wrap">
+      <canvas id="trend-chart"></canvas>
+    </div>
+  </div>
+
+  <!-- Reseñas con "Momo" -->
+  <div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.875rem;flex-wrap:wrap;gap:0.5rem;">
+      <div style="display:flex;align-items:center;gap:1rem;flex-wrap:wrap;">
+        <span class="card-title" style="margin-bottom:0;">⭐ Reseñas que mencionan "Momo"</span>
+        <div class="category-tabs no-print">
+          <button class="category-tab active" data-cat="all">Todas</button>
+          <button class="category-tab" data-cat="5">5 ⭐</button>
+          <button class="category-tab" data-cat="4">4 🔶</button>
+          <button class="category-tab" data-cat="other">1-3 Estrellas</button>
+          <button class="category-tab" data-cat="indirect">Mesa Compartida</button>
+        </div>
+      </div>
+      <span style="font-size:12px;background:rgba(251,191,36,0.1);color:var(--yellow);border:1px solid rgba(251,191,36,0.25);padding:3px 10px;border-radius:20px;font-weight:500;" id="momo-badge">0 reseñas</span>
+    </div>
+    <div class="momo-grid" id="momo-grid">
+      <div class="empty-state">Cargando...</div>
+    </div>
+    <div class="pagination no-print" id="pagination-wrap" style="display:none">
+      <!-- Paginación dinámica -->
+    </div>
+  </div>
+
+</div>
+
+<script>
+  // ─── Estado ────────────────────────────────────────────────────────────────
+  let rawReviews = []; // Todos los datos de la DB
+  let allReviews = []; // Datos filtrados por el mes seleccionado
+  let momoReviews = [];
+  let currentCategory = 'all';
+  let currentPage = 1;
+  const itemsPerPage = 6;
+  let trendChart = null;
+  let activePeriod = 'daily';
+
+  const COLORS = [
+    'linear-gradient(135deg,#3b82f6,#8b5cf6)',
+    'linear-gradient(135deg,#ec4899,#8b5cf6)',
+    'linear-gradient(135deg,#10b981,#0891b2)',
+    'linear-gradient(135deg,#f59e0b,#ef4444)',
+    'linear-gradient(135deg,#06b6d4,#3b82f6)',
+  ];
+
+  // ─── Helpers de fecha ───────────────────────────────────────────────────────
+  function parseDate(iso) { return new Date(iso); }
+
+  function startOfWeek(d) {
+    const date = new Date(d);
+    const day = date.getDay(); // 0=dom
+    const diff = (day === 0 ? -6 : 1 - day);
+    date.setDate(date.getDate() + diff);
+    date.setHours(0,0,0,0);
+    return date;
+  }
+
+  function startOfMonth(d) {
+    return new Date(d.getFullYear(), d.getMonth(), 1);
+  }
+
+  function isSameWeek(d1, d2) {
+    return startOfWeek(d1).getTime() === startOfWeek(d2).getTime();
+  }
+
+  function isSameMonth(d1, d2) {
+    return d1.getFullYear() === d2.getFullYear() && d1.getMonth() === d2.getMonth();
+  }
+
+  function formatDateLabel(iso) {
+    return new Date(iso).toLocaleDateString('es-ES', { day:'numeric', month:'short' });
+  }
+
+  // ─── Highlight Momo ─────────────────────────────────────────────────────────
+  function highlightMomo(text) {
+    return text.replace(/momo/gi, m => `<mark>${m}</mark>`);
+  }
+
+  // ─── Construir tarjeta ──────────────────────────────────────────────────────
+  function buildCard(rev) {
+    const initials = rev.author.split(' ').map(n=>n[0]).join('').substring(0,2).toUpperCase();
+    const ci = rev.author.charCodeAt(0) % COLORS.length;
+    const stars = Array.from({length:5}, (_,i) =>
+      `<svg class="star" style="fill:${i < rev.rating ? '#fbbf24':'#334155'}" viewBox="0 0 20 20"><path d="M10 1l2.4 7.3H20l-6.2 4.5 2.4 7.3L10 15.6l-6.2 4.5 2.4-7.3L0 8.3h7.6z"/></svg>`
+    ).join('');
+    const dateStr = rev.scraped_at ? formatDateLabel(rev.scraped_at) : '';
+    const link = rev.reviewUrl || '#';
+    const linkTag = rev.reviewUrl ? `href="${rev.reviewUrl}" target="_blank" rel="noopener noreferrer" style="text-decoration:none; color:inherit;"` : `style="text-decoration:none; color:inherit; cursor:default;"`;
+
+    const indirectBadge = rev.isIndirect ? `<span style="font-size:10px; background:rgba(255,255,255,0.1); border:1px solid var(--border); padding:2px 6px; border-radius:4px; margin-left:6px; color:var(--muted); font-weight:500;">Indirecta (Mesa)</span>` : '';
+
+    return `
+      <a ${linkTag} class="review-card">
+        <div class="review-top">
+          <div style="display:flex;align-items:center;gap:8px;overflow:hidden">
+            <div class="avatar" style="background:${COLORS[ci]}">${initials}</div>
+            <span class="review-author" title="${rev.author}">${rev.author}${indirectBadge}</span>
+          </div>
+          <div class="stars">${stars}</div>
+        </div>
+        <p class="review-text">${rev.isIndirect && !rev.text ? '<i style="color:var(--muted2)">Sin comentario</i>' : highlightMomo(rev.text)}</p>
+        <span class="review-date">${dateStr}</span>
+      </a>`;
+  }
+
+  // ─── Renderizado de Datos ───────────────────────────────────────────────────
+  function renderKPIs() {
+    document.getElementById('kpi-momo').textContent = momoReviews.length;
+    document.getElementById('kpi-five').textContent = momoReviews.filter(r => r.rating === 5).length;
+    document.getElementById('kpi-four').textContent = momoReviews.filter(r => r.rating === 4).length;
+    
+    const indirectCount = allReviews.filter(r => r.isIndirect).length;
+    document.getElementById('kpi-indirect').textContent = indirectCount;
+    
+    const now = new Date();
+    document.getElementById('report-subtitle').textContent =
+      `Actualizado el ${now.toLocaleDateString('es-ES',{weekday:'long',year:'numeric',month:'long',day:'numeric'})}`;
+    document.getElementById('momo-badge').textContent = `${momoReviews.length} reseñas`;
+  }
+
+  // ─── Metas ──────────────────────────────────────────────────────────────────
+  function renderGoals() {
+    const val = document.getElementById('report-month').value;
+    const now = new Date();
+    let isPastMonth = false;
+    let daysInMonth, dayOfMonth, daysLeftMonth;
+    let monthCount = 0;
+    
+    if (val === 'all') {
+      monthCount = momoReviews.filter(r => r.scraped_at && isSameMonth(parseDate(r.scraped_at), now)).length;
+      daysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
+      dayOfMonth = now.getDate();
+      daysLeftMonth = daysInMonth - dayOfMonth;
+    } else {
+      const [m, y] = val.split('_').map(Number);
+      monthCount = momoReviews.length; // Usamos momoReviews en lugar de allReviews para respetar el switch
+      isPastMonth = (now.getMonth() + 1 !== m || now.getFullYear() !== y);
+      
+      daysInMonth = new Date(y, m, 0).getDate();
+      dayOfMonth = isPastMonth ? daysInMonth : now.getDate();
+      daysLeftMonth = daysInMonth - dayOfMonth;
+    }
+
+    // Semanal
+    let weekCount = 0;
+    let daysLeftWeek = 0;
+    let dayOfWeek = now.getDay() === 0 ? 7 : now.getDay();
+
+    if (isPastMonth) {
+       // En un mes pasado, mostramos el promedio semanal del mes
+       weekCount = Math.round(monthCount / 4);
+       daysLeftWeek = 0;
+       dayOfWeek = 7;
+    } else {
+       weekCount = momoReviews.filter(r => r.scraped_at && isSameWeek(parseDate(r.scraped_at), now)).length;
+       daysLeftWeek = 7 - dayOfWeek;
+    }
+
+    const weekMin = 20, weekMax = 30;
+    const weekPct = Math.min((weekCount / weekMax) * 100, 100);
+    const weekStatus = weekCount >= weekMin ? 'green' : weekCount >= 10 ? 'yellow' : 'red';
+    const weekLabels = { green: '🟢 En camino', yellow: '🟡 Ritmo lento', red: '🔴 En riesgo' };
+    
+    if (isPastMonth) {
+        weekLabels.green = '🟢 Meta lograda';
+        weekLabels.yellow = '🟡 Regular';
+        weekLabels.red = '🔴 No lograda';
+    }
+
+    const weekFills = { green: 'fill-green', yellow: 'fill-yellow', red: 'fill-red' };
+    const weekBadges = { green: 'badge-green', yellow: 'badge-yellow', red: 'badge-red' };
+
+    document.getElementById('weekly-current').textContent = weekCount;
+    document.getElementById('weekly-bar').style.width = weekPct + '%';
+    document.getElementById('weekly-bar').className = `progress-fill ${weekFills[weekStatus]}`;
+    document.getElementById('weekly-badge').textContent = weekLabels[weekStatus];
+    document.getElementById('weekly-badge').className = `goal-badge ${weekBadges[weekStatus]}`;
+
+    if (isPastMonth) {
+      document.getElementById('weekly-proj').innerHTML = `Promedio semanal del mes: <span>~${weekCount} reseñas</span>.`;
+    } else {
+      const dailyRate = dayOfWeek > 0 ? weekCount / dayOfWeek : 0;
+      const projWeek = Math.round(dailyRate * 7);
+      document.getElementById('weekly-proj').innerHTML = `A este ritmo terminarás la semana con <span>~${projWeek} reseñas</span>. Quedan ${daysLeftWeek} días.`;
+    }
+
+    // Mensual
+    const monthMin = 80, monthMax = 120;
+    const monthPct = Math.min((monthCount / monthMax) * 100, 100);
+    const monthStatus = monthCount >= monthMin ? 'green' : monthCount >= 40 ? 'yellow' : 'red';
+    const mLabels = { green: '🟢 En camino', yellow: '🟡 Ritmo lento', red: '🔴 En riesgo' };
+    
+    if (isPastMonth) {
+        mLabels.green = '🟢 Meta lograda';
+        mLabels.yellow = '🟡 Regular';
+        mLabels.red = '🔴 No lograda';
+    }
+
+    document.getElementById('monthly-current').textContent = monthCount;
+    document.getElementById('monthly-bar').style.width = monthPct + '%';
+    document.getElementById('monthly-bar').className = `progress-fill ${weekFills[monthStatus]}`;
+    document.getElementById('monthly-badge').textContent = mLabels[monthStatus];
+    document.getElementById('monthly-badge').className = `goal-badge ${weekBadges[monthStatus]}`;
+
+    if (isPastMonth) {
+      document.getElementById('monthly-proj').innerHTML = `Mes cerrado con <span>${monthCount} reseñas totales</span>.`;
+    } else {
+      const dailyRateMonth = dayOfMonth > 0 ? monthCount / dayOfMonth : 0;
+      const projMonth = Math.round(dailyRateMonth * daysInMonth);
+      document.getElementById('monthly-proj').innerHTML = `Proyección fin de mes: <span>~${projMonth} reseñas</span>. Quedan ${daysLeftMonth} días.`;
+    }
+  }
+
+  // ─── Gráfico ─────────────────────────────────────────────────────────────────
+  // ─── Gráfico ─────────────────────────────────────────────────────────────────
+  function renderChart(period) {
+    const val = document.getElementById('report-month').value;
+    const now = new Date();
+    let isSpecificMonth = false;
+    let refYear = now.getFullYear();
+    let refMonth = now.getMonth();
+    
+    if (val !== 'all') {
+      const [m, y] = val.split('_').map(Number);
+      refMonth = m - 1;
+      refYear = y;
+      isSpecificMonth = true;
+    }
+
+    let labels = [], data5 = [], data4 = [], dataIndirect = [];
+    const includeIndirect = document.getElementById('toggle-indirect').checked;
+
+    if (period === 'daily') {
+      if (isSpecificMonth) {
+        // Todos los días del mes seleccionado
+        const daysInMonth = new Date(refYear, refMonth + 1, 0).getDate();
+        for (let i = 1; i <= daysInMonth; i++) {
+          const d = new Date(refYear, refMonth, i);
+          const next = new Date(d); next.setDate(next.getDate() + 1);
+          labels.push(d.getDate().toString());
+          const dayR = allReviews.filter(r => { if(!r.scraped_at) return false; const rd = parseDate(r.scraped_at); return rd >= d && rd < next && (/momo/i.test(r.text) || (includeIndirect && r.isIndirect)); });
+          data5.push(dayR.filter(r=>r.rating===5 && !r.isIndirect).length);
+          data4.push(dayR.filter(r=>r.rating===4 && !r.isIndirect).length);
+          dataIndirect.push(includeIndirect ? dayR.filter(r=>r.isIndirect).length : 0);
+        }
+      } else {
+        // Últimos 14 días (comportamiento histórico global)
+        for (let i = 13; i >= 0; i--) {
+          const d = new Date(now); d.setDate(d.getDate() - i); d.setHours(0,0,0,0);
+          const next = new Date(d); next.setDate(next.getDate() + 1);
+          labels.push(d.toLocaleDateString('es-ES',{day:'numeric',month:'short'}));
+          const dayR = allReviews.filter(r => { if(!r.scraped_at) return false; const rd = parseDate(r.scraped_at); return rd >= d && rd < next && (/momo/i.test(r.text) || (includeIndirect && r.isIndirect)); });
+          data5.push(dayR.filter(r=>r.rating===5 && !r.isIndirect).length);
+          data4.push(dayR.filter(r=>r.rating===4 && !r.isIndirect).length);
+          dataIndirect.push(includeIndirect ? dayR.filter(r=>r.isIndirect).length : 0);
+        }
+      }
+    } else if (period === 'weekly') {
+      if (isSpecificMonth) {
+        // Semanas calendario completas que caen dentro del mes seleccionado
+        let currentWeekStart = startOfWeek(new Date(refYear, refMonth, 1));
+        const endOfMonth = new Date(refYear, refMonth + 1, 0);
+        let weekNum = 1;
+        while (currentWeekStart <= endOfMonth) {
+          const weekEnd = new Date(currentWeekStart); weekEnd.setDate(weekEnd.getDate() + 7);
+          labels.push(`Semana ${weekNum}`);
+          const wR = allReviews.filter(r => { if(!r.scraped_at) return false; const rd = parseDate(r.scraped_at); return rd >= currentWeekStart && rd < weekEnd && (/momo/i.test(r.text) || (includeIndirect && r.isIndirect)); });
+          data5.push(wR.filter(r=>r.rating===5 && !r.isIndirect).length);
+          data4.push(wR.filter(r=>r.rating===4 && !r.isIndirect).length);
+          dataIndirect.push(includeIndirect ? wR.filter(r=>r.isIndirect).length : 0);
+          currentWeekStart.setDate(currentWeekStart.getDate() + 7);
+          weekNum++;
+        }
+      } else {
+        // Últimas 8 semanas
+        for (let i = 7; i >= 0; i--) {
+          const weekStart = startOfWeek(new Date(now.getTime() - i * 7 * 86400000));
+          const weekEnd = new Date(weekStart); weekEnd.setDate(weekEnd.getDate() + 7);
+          labels.push(`Sem ${weekStart.toLocaleDateString('es-ES',{day:'numeric',month:'short'})}`);
+          const wR = allReviews.filter(r => { if(!r.scraped_at) return false; const rd = parseDate(r.scraped_at); return rd >= weekStart && rd < weekEnd && (/momo/i.test(r.text) || (includeIndirect && r.isIndirect)); });
+          data5.push(wR.filter(r=>r.rating===5 && !r.isIndirect).length);
+          data4.push(wR.filter(r=>r.rating===4 && !r.isIndirect).length);
+          dataIndirect.push(includeIndirect ? wR.filter(r=>r.isIndirect).length : 0);
+        }
+      }
+    } else {
+      // Mensual
+      if (isSpecificMonth) {
+         // Mostrar los últimos 6 meses terminando en el mes seleccionado
+         for (let i = 5; i >= 0; i--) {
+           const mStart = new Date(refYear, refMonth - i, 1);
+           const mEnd = new Date(refYear, refMonth - i + 1, 1);
+           labels.push(mStart.toLocaleDateString('es-ES',{month:'short',year:'numeric'}));
+           // Como allReviews ya está filtrado solo para "ese" mes, usar rawReviews para ver el contexto histórico general si se elige Mensual
+           // O usar momoReviews si queremos mantener la tendencia general
+           const mR = rawReviews.filter(r => { if(!r.scraped_at) return false; const rd = parseDate(r.scraped_at); return rd >= mStart && rd < mEnd && (/momo/i.test(r.text) || (includeIndirect && r.isIndirect)); });
+           data5.push(mR.filter(r=>r.rating===5 && !r.isIndirect).length);
+           data4.push(mR.filter(r=>r.rating===4 && !r.isIndirect).length);
+           dataIndirect.push(includeIndirect ? mR.filter(r=>r.isIndirect).length : 0);
+         }
+      } else {
+         // Últimos 6 meses
+         for (let i = 5; i >= 0; i--) {
+           const mStart = new Date(now.getFullYear(), now.getMonth() - i, 1);
+           const mEnd = new Date(now.getFullYear(), now.getMonth() - i + 1, 1);
+           labels.push(mStart.toLocaleDateString('es-ES',{month:'short',year:'numeric'}));
+           const mR = allReviews.filter(r => { if(!r.scraped_at) return false; const rd = parseDate(r.scraped_at); return rd >= mStart && rd < mEnd && (/momo/i.test(r.text) || (includeIndirect && r.isIndirect)); });
+           data5.push(mR.filter(r=>r.rating===5 && !r.isIndirect).length);
+           data4.push(mR.filter(r=>r.rating===4 && !r.isIndirect).length);
+           dataIndirect.push(includeIndirect ? mR.filter(r=>r.isIndirect).length : 0);
+         }
+      }
+    }
+
+    const ctx = document.getElementById('trend-chart').getContext('2d');
+    if (trendChart) trendChart.destroy();
+    const style = getComputedStyle(document.documentElement);
+    const cMuted = style.getPropertyValue('--muted').trim() || '#8a8a9e';
+    const cSurface = style.getPropertyValue('--surface').trim() || '#121216';
+    const cText = style.getPropertyValue('--text').trim() || '#f4f4f7';
+    const cBorder = style.getPropertyValue('--border').trim() || '#1e1e28';
+
+    trendChart = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels,
+        datasets: [
+          { label: '5 Estrellas', data: data5, backgroundColor: '#f59e0b', borderRadius: 4, borderSkipped: false, maxBarThickness: 32 },
+          { label: '4 Estrellas', data: data4, backgroundColor: '#f97316', borderRadius: 4, borderSkipped: false, maxBarThickness: 32 },
+          ...(includeIndirect ? [{ label: 'Mesa Compartida', data: dataIndirect, backgroundColor: '#3b82f6', borderRadius: 4, borderSkipped: false, maxBarThickness: 32 }] : [])
+        ]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        interaction: { mode: 'index', intersect: false },
+        plugins: { 
+          legend: { labels: { color: cMuted, boxWidth: 10, font: { size: 11, family: 'Inter' }, usePointStyle: true, pointStyle: 'rectRounded' } }, 
+          tooltip: { backgroundColor: cSurface, titleColor: cText, bodyColor: cMuted, borderColor: cBorder, borderWidth: 1, padding: 10, cornerRadius: 6, titleFont: { size: 12, family: 'Inter', weight: '600' }, bodyFont: { size: 11, family: 'Inter' } } 
+        },
+        scales: {
+          x: { stacked: true, grid: { display: false }, border: { display: false }, ticks: { color: cMuted, font: { size: 10, family: 'Inter' } } },
+          y: { stacked: true, beginAtZero: true, grid: { color: cBorder, drawBorder: false }, border: { display: false }, ticks: { color: cMuted, font: { size: 10, family: 'Inter' }, stepSize: 1, padding: 8 } }
+        }
+      }
+    });
+  }
+
+  // ─── Reseñas Momo ───────────────────────────────────────────────────────────
+  function renderMomoGrid() {
+    const grid = document.getElementById('momo-grid');
+    const wrap = document.getElementById('pagination-wrap');
+    const printTableBody = document.getElementById('print-momo-tbody');
+    
+    // 1. Filtro por Categoría
+    let filteredReviews = momoReviews;
+    if (currentCategory === '5') filteredReviews = momoReviews.filter(r => r.rating === 5);
+    else if (currentCategory === '4') filteredReviews = momoReviews.filter(r => r.rating === 4);
+    else if (currentCategory === 'other') filteredReviews = momoReviews.filter(r => r.rating < 4);
+    else if (currentCategory === 'indirect') filteredReviews = momoReviews.filter(r => r.isIndirect);
+    
+    if (filteredReviews.length === 0) {
+      grid.innerHTML = '<div class="empty-state">No hay reseñas para esta categoría.</div>';
+      wrap.style.display = 'none';
+      if(printTableBody) printTableBody.innerHTML = '<tr><td colspan="4">No hay reseñas</td></tr>';
+      return;
+    }
+    
+    // 2. Paginación
+    const totalPages = Math.ceil(filteredReviews.length / itemsPerPage);
+    if (currentPage > totalPages) currentPage = totalPages;
+    if (currentPage < 1) currentPage = 1;
+    
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const slice = filteredReviews.slice(startIndex, startIndex + itemsPerPage);
+    
+    // Grid normal (pantalla)
+    grid.innerHTML = slice.map(buildCard).join('');
+    
+    // Controles de Paginación
+    if (totalPages > 1) {
+      wrap.style.display = 'flex';
+      let pagHtml = `<button class="page-btn" ${currentPage === 1 ? 'disabled' : ''} onclick="goToPage(${currentPage - 1})">«</button>`;
+      
+      let startP = Math.max(1, currentPage - 2);
+      let endP = Math.min(totalPages, startP + 4);
+      if (endP - startP < 4) startP = Math.max(1, endP - 4);
+      
+      for(let p = startP; p <= endP; p++) {
+        pagHtml += `<button class="page-btn ${p === currentPage ? 'active' : ''}" onclick="goToPage(${p})">${p}</button>`;
+      }
+      
+      pagHtml += `<button class="page-btn" ${currentPage === totalPages ? 'disabled' : ''} onclick="goToPage(${currentPage + 1})">»</button>`;
+      wrap.innerHTML = pagHtml;
+    } else {
+      wrap.style.display = 'none';
+    }
+    
+    // Tabla de impresión (completa)
+    if (printTableBody) {
+      printTableBody.innerHTML = filteredReviews.map(rev => {
+        const d = rev.scraped_at ? formatDateLabel(rev.scraped_at) : '';
+        const stars = '★'.repeat(rev.rating) + '☆'.repeat(5 - rev.rating);
+        return `
+          <tr>
+            <td style="width: 15%;">${d}</td>
+            <td style="width: 25%; font-weight: 500;">
+              ${rev.reviewUrl ? `<a href="${rev.reviewUrl}" target="_blank" rel="noopener noreferrer">${rev.author}</a>` : rev.author}
+              ${rev.isIndirect ? ' <span style="font-size:9px; background:#f3f4f6; border:1px solid #e5e7eb; padding:1px 4px; border-radius:3px; color:#6b7280; font-weight:600;">INDIRECTA</span>' : ''}
+            </td>
+            <td style="width: 15%;" class="stars-text">${stars}</td>
+            <td style="line-height: 1.5;">${rev.isIndirect && !rev.text ? '<i>Sin comentario</i>' : highlightMomo(rev.text)}</td>
+          </tr>
+        `;
+      }).join('');
+    }
+  }
+
+  // ─── Lógica de filtrado por mes ─────────────────────────────────────────────
+  let isFirstLoad = true;
+
+  function updateMonthSelector() {
+    const selector = document.getElementById('report-month');
+    let currentVal = selector.value;
+    
+    // Encontrar todos los meses únicos en rawReviews
+    const months = new Set();
+    rawReviews.forEach(r => {
+      if(r.scraped_at) {
+        const d = parseDate(r.scraped_at);
+        months.add(`${d.getMonth() + 1}_${d.getFullYear()}`);
+      }
+    });
+
+    const monthNames = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"];
+    
+    let optionsHtml = '<option value="all">Histórico Completo</option>';
+    const sortedMonths = Array.from(months)
+      .sort((a,b) => {
+        const [ma, ya] = a.split('_').map(Number);
+        const [mb, yb] = b.split('_').map(Number);
+        return ya === yb ? mb - ma : yb - ya;
+      });
+
+    sortedMonths.forEach(m => {
+        const [month, year] = m.split('_');
+        optionsHtml += `<option value="${m}">${monthNames[month-1]} ${year}</option>`;
+      });
+      
+    selector.innerHTML = optionsHtml;
+    
+    if (isFirstLoad && sortedMonths.length > 0) {
+      const now = new Date();
+      let prevM = now.getMonth(); // 0-indexed, 0 = Enero, por lo que now.getMonth() ya es el mes anterior en 1-index (ej. Junio es 5).
+      let prevY = now.getFullYear();
+      if (prevM === 0) { prevM = 12; prevY -= 1; }
+      const prevMonthStr = `${prevM}_${prevY}`;
+
+      if (sortedMonths.includes(prevMonthStr)) {
+        selector.value = prevMonthStr;
+      } else {
+        selector.value = sortedMonths[0]; // Fallback al más reciente
+      }
+      isFirstLoad = false;
+    } else if (Array.from(selector.options).some(o => o.value === currentVal)) {
+      selector.value = currentVal;
+    }
+  }
+
+  function applyMonthFilter() {
+    const val = document.getElementById('report-month').value;
+    if (val === 'all') {
+      allReviews = [...rawReviews];
+    } else {
+      const [m, y] = val.split('_').map(Number);
+      allReviews = rawReviews.filter(r => {
+        if(!r.scraped_at) return false;
+        const d = parseDate(r.scraped_at);
+        return d.getMonth() + 1 === m && d.getFullYear() === y;
+      });
+    }
+
+    const includeIndirect = document.getElementById('toggle-indirect').checked;
+
+    momoReviews = allReviews
+      .filter(r => /momo/i.test(r.text) || (includeIndirect && r.isIndirect))
+      .sort((a,b) => new Date(b.scraped_at||0) - new Date(a.scraped_at||0));
+
+    currentPage = 1; // Reiniciar página al cambiar mes
+    
+    renderKPIs();
+    renderGoals();
+    renderChart(activePeriod);
+    renderMomoGrid();
+  }
+
+  document.getElementById('report-month').addEventListener('change', applyMonthFilter);
+  document.getElementById('kpi-indirect-card').addEventListener('click', (e) => {
+    const cb = document.getElementById('toggle-indirect');
+    cb.checked = !cb.checked;
+    applyMonthFilter();
+  });
+
+  // ─── Carga principal ─────────────────────────────────────────────────────────
+  async function loadData() {
+    try {
+      const res = await fetch('/api/report-data');
+      rawReviews = await res.json();
+      
+      updateMonthSelector();
+      applyMonthFilter();
+    } catch(e) {
+      console.error('Error cargando datos:', e);
+    }
+  }
+
+  // ─── Eventos ─────────────────────────────────────────────────────────────────
+  window.goToPage = function(page) {
+    currentPage = page;
+    renderMomoGrid();
+    document.getElementById('momo-grid').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  };
+
+  document.getElementById('refresh-btn').addEventListener('click', loadData);
+
+  document.querySelectorAll('.period-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.period-tab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      activePeriod = tab.dataset.period;
+      renderChart(activePeriod);
+    });
+  });
+
+  document.querySelectorAll('.category-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.category-tab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      currentCategory = tab.dataset.cat;
+      currentPage = 1;
+      renderMomoGrid();
+    });
+  });
+
+  // Tema Claro/Oscuro
+  const themeToggle = document.getElementById('theme-toggle');
+  const themeIcon = document.getElementById('theme-icon');
+  
+  function updateThemeIcon() {
+    const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+    if (isDark) {
+      themeIcon.innerHTML = '<circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>';
+    } else {
+      themeIcon.innerHTML = '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>';
+    }
+  }
+  
+  themeToggle.addEventListener('click', () => {
+    const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+    const newTheme = isDark ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', newTheme);
+    localStorage.setItem('theme', newTheme);
+    updateThemeIcon();
+    if(trendChart) {
+        renderChart(activePeriod); // Re-renderizar chart para aplicar nuevos colores
+    }
+  });
+  updateThemeIcon();
+
+  // Escuchar cambios de preferencia del sistema si no hay preferencia manual fuerte
+  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+    if (!localStorage.getItem('theme')) {
+      const newTheme = e.matches ? 'dark' : 'light';
+      document.documentElement.setAttribute('data-theme', newTheme);
+      updateThemeIcon();
+      if(trendChart) renderChart(activePeriod);
+    }
+  });
+
+  // ─── Arranque ────────────────────────────────────────────────────────────────
+  loadData();
+</script>
+
+<!-- Estructura para Impresión (Tabla de reseñas completa) -->
+<div class="print-only">
+  <div class="print-header">
+    <h2>Listado Completo de Reseñas ("Momo")</h2>
+  </div>
+  <table class="print-reviews-table">
+    <thead>
+      <tr>
+        <th style="width: 15%;">Fecha</th>
+        <th style="width: 20%;">Autor</th>
+        <th style="width: 15%;">Estrellas</th>
+        <th style="width: 50%;">Comentario</th>
+      </tr>
+    </thead>
+    <tbody id="print-momo-tbody">
+      <!-- Se llena dinámicamente en renderMomoGrid() -->
+    </tbody>
+  </table>
+</div>
+
+</body>
+</html>

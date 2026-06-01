@@ -1,0 +1,14 @@
+# Secrets y variables de entorno
+.env
+.env.local
+
+# Dependencias (proyecto padre y scraper)
+node_modules/
+scrap/node_modules/
+
+# Base de datos de reseñas (se genera en tiempo de ejecución)
+scrap/reviews.json
+
+# Logs
+*.log
+scrap/*.log

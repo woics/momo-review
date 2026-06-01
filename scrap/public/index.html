@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Review Scraper AI — Palacio by Lola</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+      :root {
+        --bg: #0d1117;
+        --surface: rgba(22, 30, 46, 0.85);
+        --surface2: rgba(15, 22, 36, 0.9);
+        --border: rgba(255,255,255,0.07);
+        --border-hover: rgba(255,255,255,0.12);
+        --blue: #3b82f6;
+        --blue-glow: rgba(59,130,246,0.15);
+        --purple: #8b5cf6;
+        --text: #f1f5f9;
+        --muted: #64748b;
+        --muted2: #94a3b8;
+        --success: #10b981;
+        --yellow: #fbbf24;
+        --error: #ef4444;
+        --radius: 14px;
+        --radius-sm: 8px;
+      }
+      * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', system-ui, sans-serif; }
+      body { background: var(--bg); color: var(--text); min-height: 100vh; }
+
+      .app { padding: 2rem; display: flex; flex-direction: column; gap: 1.5rem; max-width: 900px; margin: 0 auto; }
+
+      /* Header */
+      .header { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
+      .badge { display: inline-flex; align-items: center; gap: 6px; background: var(--blue-glow); border: 1px solid rgba(59,130,246,0.25); color: #60a5fa; font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; padding: 4px 10px; border-radius: 20px; margin-bottom: 10px; }
+      .pulse { width: 6px; height: 6px; border-radius: 50%; background: var(--blue); animation: pulse 2s infinite; }
+      @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+      @keyframes spin { to { transform: rotate(360deg); } }
+      h1 { font-size: 1.8rem; font-weight: 700; background: linear-gradient(135deg, #f1f5f9 0%, #94a3b8 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; line-height: 1.2; }
+      .subtitle { color: var(--muted2); font-size: 0.9rem; margin-top: 4px; }
+
+      .header-stats { display: flex; gap: 0.75rem; flex-wrap: wrap; }
+      .stat-pill { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 0.6rem 1.1rem; text-align: center; min-width: 90px; transition: border-color 0.2s; }
+      .stat-pill.five { border-color: rgba(251,191,36,0.3); }
+      .stat-pill.four { border-color: rgba(251,146,60,0.3); }
+      .stat-num { font-size: 1.4rem; font-weight: 700; color: var(--text); display: block; }
+      .stat-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; }
+
+      /* Control Panel */
+      .panel { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.5rem; display: flex; flex-direction: column; gap: 1.25rem; }
+
+      /* Star selector */
+      .star-selector { display: flex; gap: 0.5rem; align-items: center; }
+      .star-selector label { font-size: 0.8rem; color: var(--muted); margin-right: 4px; }
+      .star-btn { background: var(--surface2); border: 1px solid var(--border); color: var(--muted2); border-radius: 20px; padding: 0.35rem 0.9rem; font-size: 0.82rem; font-weight: 500; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 4px; }
+      .star-btn:hover { border-color: var(--border-hover); color: var(--text); }
+      .star-btn.active-5 { background: rgba(251,191,36,0.1); border-color: rgba(251,191,36,0.5); color: #fbbf24; }
+      .star-btn.active-4 { background: rgba(251,146,60,0.1); border-color: rgba(251,146,60,0.5); color: #fb923c; }
+
+      .actions { display: grid; grid-template-columns: 1fr auto; gap: 0.75rem; align-items: center; }
+      .btn-primary { background: linear-gradient(135deg, var(--blue) 0%, #2563eb 100%); color: white; border: none; border-radius: var(--radius-sm); padding: 0.8rem 1.5rem; font-size: 0.95rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.2s; box-shadow: 0 4px 20px rgba(59,130,246,0.25); }
+      .btn-primary:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 6px 24px rgba(59,130,246,0.35); }
+      .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+      .btn-stop { background: var(--surface2); border: 1px solid var(--border-hover); color: var(--muted2); border-radius: var(--radius-sm); padding: 0.8rem 1.2rem; font-size: 0.9rem; font-weight: 500; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; transition: all 0.2s; white-space: nowrap; }
+      .btn-stop:hover { border-color: rgba(239,68,68,0.4); color: #f87171; }
+
+      .status-row { display: flex; align-items: center; justify-content: space-between; }
+      .status-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--muted); display: inline-block; margin-right: 8px; transition: background 0.3s; }
+      .status-dot.active { background: var(--success); animation: pulse 1.5s infinite; }
+      .status-text { font-size: 0.875rem; color: var(--muted2); display: flex; align-items: center; }
+      .progress-count { font-size: 0.875rem; font-weight: 600; color: var(--text); font-variant-numeric: tabular-nums; }
+      .progress-track { height: 6px; background: rgba(255,255,255,0.05); border-radius: 3px; overflow: hidden; }
+      .progress-fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--blue), var(--purple)); border-radius: 3px; transition: width 0.4s ease; position: relative; }
+      .progress-fill::after { content: ''; position: absolute; right: 0; top: 0; bottom: 0; width: 30px; background: rgba(255,255,255,0.3); filter: blur(4px); }
+
+      /* Terminal */
+      .terminal-wrap { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+      .terminal-header { display: flex; align-items: center; justify-content: space-between; padding: 0.75rem 1rem; border-bottom: 1px solid var(--border); }
+      .terminal-dots { display: flex; gap: 6px; }
+      .dot { width: 10px; height: 10px; border-radius: 50%; }
+      .dot-r { background: #ef4444; } .dot-y { background: #f59e0b; } .dot-g { background: #10b981; }
+      .terminal-title { font-size: 12px; color: var(--muted); font-family: 'SF Mono', monospace; }
+      .terminal-body { background: #020617; padding: 1rem; height: 180px; overflow-y: auto; font-family: 'SF Mono', 'Fira Code', monospace; font-size: 12.5px; display: flex; flex-direction: column; gap: 4px; }
+      .log-line { display: flex; gap: 8px; line-height: 1.5; }
+      .log-time { color: #334155; flex-shrink: 0; }
+      .log-msg { color: #a7f3d0; }
+      .log-msg.warn { color: #fbbf24; }
+      .log-msg.err { color: #f87171; }
+      .log-msg.info { color: #60a5fa; }
+
+      /* Reviews section */
+      .reviews-wrap { display: flex; flex-direction: column; gap: 1rem; }
+      .reviews-top { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.75rem; }
+      .section-title { font-size: 1rem; font-weight: 600; color: var(--text); }
+
+      /* Filter tabs */
+      .filter-tabs { display: flex; gap: 0.4rem; }
+      .filter-tab { background: var(--surface2); border: 1px solid var(--border); color: var(--muted2); border-radius: 20px; padding: 0.3rem 0.85rem; font-size: 0.78rem; font-weight: 500; cursor: pointer; transition: all 0.2s; }
+      .filter-tab:hover { border-color: var(--border-hover); color: var(--text); }
+      .filter-tab.active { background: rgba(59,130,246,0.12); border-color: rgba(59,130,246,0.4); color: #60a5fa; }
+
+      .reviews-actions { display: flex; gap: 0.5rem; align-items: center; }
+      .total-badge { font-size: 12px; background: rgba(59,130,246,0.1); color: #60a5fa; border: 1px solid rgba(59,130,246,0.2); padding: 3px 10px; border-radius: 20px; font-weight: 500; white-space: nowrap; }
+      .btn-refresh { background: var(--surface2); border: 1px solid var(--border); color: var(--muted2); border-radius: var(--radius-sm); padding: 0.45rem 0.9rem; font-size: 0.8rem; cursor: pointer; display: flex; align-items: center; gap: 5px; transition: all 0.2s; }
+      .btn-refresh:hover { border-color: var(--border-hover); color: var(--text); }
+
+      .reviews-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 0.875rem; min-height: 100px; }
+      .review-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 1.1rem; display: flex; flex-direction: column; gap: 0.7rem; transition: all 0.2s; animation: fadeIn 0.3s ease; }
+      @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+      .review-card:hover { border-color: var(--border-hover); background: rgba(30,41,60,0.9); transform: translateY(-1px); }
+      .review-top { display: flex; align-items: center; justify-content: space-between; }
+      .avatar { width: 30px; height: 30px; border-radius: 50%; background: linear-gradient(135deg, var(--blue), var(--purple)); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: white; flex-shrink: 0; }
+      .review-author { font-size: 0.875rem; font-weight: 600; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 130px; }
+      .stars { display: flex; gap: 2px; }
+      .star { width: 11px; height: 11px; fill: var(--yellow); }
+      .review-text { font-size: 0.82rem; color: var(--muted2); line-height: 1.55; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; }
+      .review-meta { display: flex; align-items: center; justify-content: space-between; margin-top: auto; }
+      .sentiment { font-size: 11px; padding: 2px 8px; border-radius: 20px; font-weight: 500; }
+      .sentiment.pos5 { background: rgba(251,191,36,0.1); color: #fbbf24; border: 1px solid rgba(251,191,36,0.25); }
+      .sentiment.pos4 { background: rgba(251,146,60,0.1); color: #fb923c; border: 1px solid rgba(251,146,60,0.25); }
+
+      /* Pagination */
+      .pagination { display: flex; align-items: center; justify-content: center; gap: 0.5rem; margin-top: 0.5rem; }
+      .page-btn { background: var(--surface2); border: 1px solid var(--border); color: var(--muted2); border-radius: var(--radius-sm); padding: 0.4rem 0.9rem; font-size: 0.82rem; cursor: pointer; transition: all 0.2s; }
+      .page-btn:hover:not(:disabled) { border-color: var(--border-hover); color: var(--text); }
+      .page-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+      .page-btn.current { background: rgba(59,130,246,0.12); border-color: rgba(59,130,246,0.4); color: #60a5fa; font-weight: 600; }
+      .page-info { font-size: 0.8rem; color: var(--muted); padding: 0 0.5rem; }
+
+      .empty-state { grid-column: 1/-1; text-align: center; padding: 2.5rem; color: var(--muted); font-size: 0.875rem; background: var(--surface2); border-radius: var(--radius-sm); border: 1px dashed var(--border); }
+      .empty-icon { font-size: 2rem; display: block; margin-bottom: 8px; opacity: 0.5; }
+    </style>
+</head>
+<body>
+    <div class="app">
+      <!-- Header -->
+      <div class="header">
+        <div>
+          <div class="badge"><span class="pulse"></span>Sistema activo</div>
+          <h1>Review Scraper</h1>
+          <p class="subtitle">Extrae y analiza reseñas — Palacio by Lola</p>
+        </div>
+        <div class="header-stats">
+          <div class="stat-pill">
+            <span class="stat-num" id="stat-total">0</span>
+            <span class="stat-label">Total DB</span>
+          </div>
+          <div class="stat-pill five">
+            <span class="stat-num" style="color:#fbbf24" id="stat-five">0</span>
+            <span class="stat-label">⭐ 5 estrellas</span>
+          </div>
+          <div class="stat-pill four">
+            <span class="stat-num" style="color:#fb923c" id="stat-four">0</span>
+            <span class="stat-label">🔶 4 estrellas</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Control Panel -->
+      <div class="panel">
+        <div class="star-selector">
+          <label>Extraer reseñas de:</label>
+          <button class="star-btn active-5" id="btn-5star" data-rating="5">⭐ 5 estrellas</button>
+          <button class="star-btn" id="btn-4star" data-rating="4">🔶 4 estrellas</button>
+        </div>
+        <div class="actions">
+          <button class="btn-primary" id="start-btn">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M3 2l10 6-10 6V2z"/></svg>
+            <span id="start-btn-label">Extraer 50 Reseñas (5★)</span>
+          </button>
+          <button class="btn-stop" id="stop-btn">
+            <svg width="13" height="13" viewBox="0 0 16 16" fill="currentColor"><rect x="2" y="2" width="12" height="12" rx="1"/></svg>
+            Cerrar Navegador
+          </button>
+        </div>
+        <div class="status-row">
+          <span class="status-text">
+            <span class="status-dot" id="status-dot"></span>
+            <span id="status-text">Listo para iniciar...</span>
+          </span>
+          <span class="progress-count" id="progress-count">0 / 0</span>
+        </div>
+        <div class="progress-track">
+          <div class="progress-fill" id="progress-bar" style="width:0%"></div>
+        </div>
+      </div>
+
+      <!-- Control Panel: Reporte Momo -->
+      <div class="panel" style="border-color: rgba(139, 92, 246, 0.4); background: linear-gradient(180deg, rgba(15,22,36,0.9) 0%, rgba(13,17,23,0.9) 100%);">
+        <div>
+          <h3 style="font-size: 1.1rem; margin-bottom: 0.3rem; display: flex; align-items: center; gap: 8px;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--purple)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+            Generar Reporte "Momo"
+          </h3>
+          <p style="font-size: 0.8rem; color: var(--muted);">Extrae TODO el histórico hasta el mes seleccionado, filtrando solo menciones de "Momo".</p>
+        </div>
+        <div style="display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap;">
+          <select id="momo-month" style="background: var(--surface2); border: 1px solid var(--border); color: var(--text); border-radius: var(--radius-sm); padding: 0.6rem; font-size: 0.9rem; outline: none;">
+            <option value="1">Enero</option>
+            <option value="2">Febrero</option>
+            <option value="3">Marzo</option>
+            <option value="4">Abril</option>
+            <option value="5">Mayo</option>
+            <option value="6">Junio</option>
+            <option value="7">Julio</option>
+            <option value="8">Agosto</option>
+            <option value="9">Septiembre</option>
+            <option value="10">Octubre</option>
+            <option value="11">Noviembre</option>
+            <option value="12">Diciembre</option>
+          </select>
+          <select id="momo-year" style="background: var(--surface2); border: 1px solid var(--border); color: var(--text); border-radius: var(--radius-sm); padding: 0.6rem; font-size: 0.9rem; outline: none;">
+            <option value="2026">2026</option>
+            <option value="2025">2025</option>
+          </select>
+          <button class="btn-primary" id="start-momo-btn" style="background: linear-gradient(135deg, var(--purple) 0%, #7c3aed 100%); box-shadow: 0 4px 20px rgba(139,92,246,0.25);">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M3 2l10 6-10 6V2z"/></svg>
+            Iniciar Extracción Histórica
+          </button>
+        </div>
+      </div>
+
+      <!-- Terminal -->
+      <div class="terminal-wrap">
+        <div class="terminal-header">
+          <div class="terminal-dots">
+            <div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div>
+          </div>
+          <span class="terminal-title">terminal — scraper.log</span>
+          <span></span>
+        </div>
+        <div class="terminal-body" id="logs"></div>
+      </div>
+
+      <!-- Reviews -->
+      <div class="reviews-wrap">
+        <div class="reviews-top">
+          <span class="section-title">Base de datos</span>
+          <div class="filter-tabs">
+            <button class="filter-tab active" data-filter="all">Todas</button>
+            <button class="filter-tab" data-filter="5">⭐ 5 Estrellas</button>
+            <button class="filter-tab" data-filter="4">🔶 4 Estrellas</button>
+          </div>
+          <div class="reviews-actions">
+            <span class="total-badge" id="total-badge">0 reseñas</span>
+            <button class="btn-refresh" id="refresh-btn">
+              <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 8a6 6 0 11-1.2-3.6M14 2v4h-4"/></svg>
+              Refrescar
+            </button>
+          </div>
+        </div>
+        <div class="reviews-grid" id="reviews-list"></div>
+        <div class="pagination" id="pagination"></div>
+      </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

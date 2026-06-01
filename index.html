@@ -1,0 +1,1838 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Etiqueta para bloquear la indexación y el rastreo de Google -->
+  <meta name="robots" content="noindex, nofollow">
+  <title>Momo ✦ Palacio by Lola - Final</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500;600&display=swap"
+    rel="stylesheet">
+  <style>
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --gold: #C9A84C;
+      --gold-light: #E8C97A;
+      --cream: #FAF6EF;
+      --dark: #1A1208;
+      --warm: #2D1F0A;
+      --text: #3D2B0F;
+      --muted: #8A7560;
+    }
+
+    body {
+      background-color: var(--cream);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2.5rem 1.2rem;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 80% 50% at 50% 0%, rgba(201, 168, 76, 0.13) 0%, transparent 70%),
+        radial-gradient(ellipse 50% 40% at 90% 100%, rgba(201, 168, 76, 0.07) 0%, transparent 60%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .container {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 400px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1.4rem;
+    }
+
+    .header {
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.4rem;
+      animation: fadeUp 0.5s ease both;
+    }
+
+    .avatar {
+      width: 82px;
+      height: 82px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--gold), var(--warm));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.1rem;
+      box-shadow: 0 0 0 3px var(--cream), 0 0 0 5px rgba(201, 168, 76, 0.35), 0 10px 28px rgba(201, 168, 76, 0.18);
+      margin-bottom: 0.4rem;
+    }
+
+    .name {
+      font-family: 'Playfair Display', serif;
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--dark);
+      letter-spacing: -0.02em;
+      line-height: 1;
+    }
+
+    .role {
+      font-size: 0.75rem;
+      color: var(--muted);
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+    }
+
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--gold);
+      font-size: 0.65rem;
+      letter-spacing: 0.3em;
+      margin-top: 0.2rem;
+    }
+
+    .divider::before,
+    .divider::after {
+      content: '';
+      width: 36px;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--gold));
+    }
+
+    .divider::after {
+      background: linear-gradient(90deg, var(--gold), transparent);
+    }
+
+    .btn-carta {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 0.88rem 1.2rem;
+      border-radius: 14px;
+      background: var(--dark);
+      color: var(--gold-light);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 500;
+      text-decoration: none;
+      border: 1px solid rgba(201, 168, 76, 0.2);
+      box-shadow: 0 4px 16px rgba(26, 18, 8, 0.2);
+      transition: transform 0.18s, box-shadow 0.18s;
+      animation: fadeUp 0.5s ease both;
+    }
+
+    .btn-carta:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(26, 18, 8, 0.3);
+    }
+
+    .btn-carta:active {
+      transform: translateY(0);
+    }
+
+    .ext {
+      font-size: 0.68rem;
+      opacity: 0.45;
+      margin-left: auto;
+    }
+
+    .options-section {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+      animation: fadeUp 0.5s 0.05s ease both;
+    }
+
+    .cs-label {
+      font-size: 0.68rem;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    .cs-chips {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 0.4rem;
+    }
+
+    .cs-chip {
+      background: transparent;
+      border: 1px solid rgba(201, 168, 76, 0.3);
+      border-radius: 20px;
+      padding: 0.4rem 0.8rem;
+      color: var(--muted);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.75rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+
+    .cs-chip:hover {
+      border-color: var(--gold);
+      color: var(--text);
+    }
+
+    .cs-chip.active {
+      background: rgba(201, 168, 76, 0.15);
+      border-color: var(--gold);
+      color: var(--dark);
+      font-weight: 500;
+      box-shadow: 0 2px 8px rgba(201, 168, 76, 0.15);
+    }
+
+    .cs-chip.active-peach {
+      background: rgba(255, 182, 193, 0.2);
+      border-color: #ff8c94;
+      color: var(--dark);
+      font-weight: 500;
+      box-shadow: 0 2px 8px rgba(255, 182, 193, 0.3);
+    }
+
+    .ai-section {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      animation: fadeUp 0.5s 0.08s ease both;
+    }
+
+    .inputs-row {
+      display: flex;
+      gap: 0.4rem;
+      width: 100%;
+    }
+
+    .custom-notes {
+      width: 100%;
+      background: #fff;
+      border: 1px solid rgba(201, 168, 76, 0.25);
+      border-radius: 12px;
+      padding: 0.85rem 1rem;
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.85rem;
+      transition: all 0.2s;
+      box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.02);
+    }
+
+    .custom-notes:focus {
+      outline: none;
+      border-color: var(--gold);
+      box-shadow: 0 0 0 3px rgba(201, 168, 76, 0.15);
+    }
+
+    .custom-notes::placeholder {
+      color: var(--muted);
+      opacity: 0.6;
+    }
+
+    .custom-select {
+      flex: 1;
+      min-width: 0;
+      background: #fff;
+      border: 1px solid rgba(201, 168, 76, 0.25);
+      border-radius: 12px;
+      padding: 0.85rem 1rem;
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.85rem;
+      transition: all 0.2s;
+      box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.02);
+      appearance: none;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      cursor: pointer;
+      background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%238A7560' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 1rem center;
+      background-size: 1rem;
+      padding-right: 2.5rem;
+    }
+
+    .custom-select:focus {
+      outline: none;
+      border-color: var(--gold);
+      box-shadow: 0 0 0 3px rgba(201, 168, 76, 0.15);
+    }
+
+
+    .btn-ai-generate {
+      width: 100%;
+      padding: 0.8rem;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #fff, var(--cream));
+      border: 1px solid var(--gold);
+      color: var(--dark);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.4rem;
+      box-shadow: 0 2px 8px rgba(201, 168, 76, 0.1);
+    }
+
+    .btn-ai-generate:hover {
+      background: var(--gold);
+      color: #fff;
+      box-shadow: 0 4px 14px rgba(201, 168, 76, 0.3);
+    }
+
+    .btn-ai-generate:disabled {
+      opacity: 0.6;
+      pointer-events: none;
+    }
+
+    .review-card {
+      width: 100%;
+      background: #fff;
+      border: 1px solid rgba(201, 168, 76, 0.16);
+      border-radius: 20px;
+      padding: 1.3rem;
+      box-shadow: 0 4px 20px rgba(201, 168, 76, 0.06), 0 1px 4px rgba(0, 0, 0, 0.03);
+      display: flex;
+      flex-direction: column;
+      gap: 0.9rem;
+      animation: fadeUp 0.5s 0.12s ease both;
+    }
+
+    .rc-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .rc-label-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 0.12rem;
+    }
+
+    .rc-label {
+      font-size: 0.67rem;
+      font-weight: 500;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--gold);
+    }
+
+    .rc-counter {
+      font-size: 0.62rem;
+      color: var(--muted);
+      letter-spacing: 0.05em;
+    }
+
+    .stars {
+      color: var(--gold);
+      font-size: 0.8rem;
+      letter-spacing: 0.04em;
+    }
+
+    .review-body {
+      font-family: 'DM Sans', sans-serif;
+      font-style: normal;
+      font-size: 0.92rem;
+      line-height: 1.6;
+      color: var(--text);
+      min-height: 68px;
+      transition: opacity 0.28s ease;
+    }
+
+    .review-body.fading {
+      opacity: 0;
+    }
+
+    .added-phrase {
+      color: var(--gold);
+      font-weight: 500;
+    }
+
+    .rc-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      border-bottom: 1px solid rgba(201, 168, 76, 0.15);
+      padding-bottom: 1rem;
+      margin-bottom: 0.2rem;
+    }
+
+    .footer-left {
+      display: flex;
+      gap: 0.4rem;
+      align-items: center;
+    }
+
+    .btn-refresh {
+      background: none;
+      border: 1px solid rgba(201, 168, 76, 0.22);
+      border-radius: 8px;
+      color: var(--muted);
+      font-size: 0.74rem;
+      font-family: 'DM Sans', sans-serif;
+      cursor: pointer;
+      padding: 0.4rem 0.6rem;
+      display: flex;
+      align-items: center;
+      gap: 0.28rem;
+      transition: all 0.18s;
+    }
+
+    .btn-refresh:hover {
+      border-color: var(--gold);
+      color: var(--gold);
+    }
+
+    .btn-refresh:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    .lang-select {
+      background: rgba(255, 255, 255, 0.5);
+      border: 1px solid rgba(201, 168, 76, 0.3);
+      border-radius: 8px;
+      color: var(--muted);
+      font-size: 0.74rem;
+      font-weight: 500;
+      font-family: 'DM Sans', sans-serif;
+      padding: 0.35rem 0.6rem;
+      cursor: pointer;
+      outline: none;
+      transition: all 0.2s;
+      appearance: none;
+      text-align: center;
+    }
+
+    .lang-select:hover,
+    .lang-select:focus {
+      border-color: var(--gold);
+      color: var(--gold);
+      background: #fff;
+    }
+
+    .lang-select:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    .spin {
+      display: inline-block;
+    }
+
+    .loading .spin {
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .btn-google-action {
+      width: 100%;
+      background: linear-gradient(135deg, var(--dark), #2a1d0d);
+      border: 1px solid rgba(201, 168, 76, 0.3);
+      border-radius: 12px;
+      color: var(--gold-light);
+      font-size: 0.85rem;
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 600;
+      cursor: pointer;
+      padding: 0.9rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      transition: all 0.2s;
+      box-shadow: 0 4px 15px rgba(26, 18, 8, 0.25);
+      text-decoration: none;
+    }
+
+    .btn-google-action:hover {
+      box-shadow: 0 6px 20px rgba(26, 18, 8, 0.35);
+      transform: translateY(-2px);
+      border-color: var(--gold);
+    }
+
+    .btn-google-action:active {
+      transform: scale(0.98);
+    }
+
+    .btn-google-action.copied {
+      background: linear-gradient(135deg, #4CAF82, #2E8B57);
+      color: #fff;
+      border-color: transparent;
+      box-shadow: 0 4px 15px rgba(76, 175, 130, 0.3);
+      animation: copyPop 0.3s ease;
+    }
+
+    @keyframes copyPop {
+      0% {
+        transform: scale(1);
+      }
+
+      50% {
+        transform: scale(1.04);
+      }
+
+      100% {
+        transform: scale(1);
+      }
+    }
+
+    .footer {
+      font-size: 0.67rem;
+      color: var(--muted);
+      text-align: center;
+      opacity: 0.55;
+      letter-spacing: 0.04em;
+      animation: fadeUp 0.5s 0.22s ease both;
+    }
+
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(16px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Skeleton Loader */
+    .skeleton {
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+      width: 100%;
+      padding: 0.2rem 0;
+    }
+
+    .skeleton-line {
+      height: 12px;
+      background: linear-gradient(90deg, #f3ede2 25%, #e9dec9 50%, #f3ede2 75%);
+      background-size: 200% 100%;
+      animation: loadingSkeleton 1.4s infinite linear;
+      border-radius: 6px;
+    }
+
+    .skeleton-line:nth-child(1) {
+      width: 90%;
+    }
+
+    .skeleton-line:nth-child(2) {
+      width: 100%;
+    }
+
+    .skeleton-line:nth-child(3) {
+      width: 75%;
+    }
+
+    @keyframes loadingSkeleton {
+      0% {
+        background-position: 200% 0;
+      }
+
+      100% {
+        background-position: -200% 0;
+      }
+    }
+
+    /* Lock Overlay Medieval Styles */
+    .lock-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(26, 18, 8, 0.96); /* Elegante marrón oscuro medieval */
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+      animation: fadeIn 0.4s ease both;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .lock-card {
+      background: var(--cream);
+      border: 2px solid var(--gold);
+      border-radius: 24px;
+      padding: 2.2rem 1.8rem;
+      width: 100%;
+      max-width: 380px;
+      text-align: center;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(201, 168, 76, 0.2);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1.2rem;
+      position: relative;
+      animation: scaleUpUp 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+    }
+
+    @keyframes scaleUpUp {
+      from { transform: scale(0.9) translateY(20px); opacity: 0; }
+      to { transform: scale(1) translateY(0); opacity: 1; }
+    }
+
+    .lock-icon {
+      font-size: 3.5rem;
+      line-height: 1;
+      margin-bottom: 0.2rem;
+      filter: drop-shadow(0 4px 8px rgba(201, 168, 76, 0.3));
+    }
+
+    .lock-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: var(--dark);
+      line-height: 1.25;
+    }
+
+    .lock-text {
+      font-size: 0.9rem;
+      color: var(--text);
+      line-height: 1.5;
+    }
+
+    .lock-instruction {
+      background: rgba(201, 168, 76, 0.08);
+      border-left: 3px solid var(--gold);
+      padding: 0.8rem 1rem;
+      border-radius: 0 12px 12px 0;
+      font-size: 0.85rem;
+      color: var(--dark);
+      text-align: left;
+      line-height: 1.4;
+      width: 100%;
+    }
+
+    .lock-subtext {
+      font-size: 0.78rem;
+      color: var(--muted);
+      line-height: 1.4;
+    }
+
+    .btn-lock-close {
+      width: 100%;
+      background: linear-gradient(135deg, var(--dark), #2a1d0d);
+      border: 1px solid var(--gold);
+      border-radius: 12px;
+      color: var(--gold-light);
+      font-size: 0.88rem;
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 600;
+      cursor: pointer;
+      padding: 0.9rem;
+      transition: all 0.2s;
+      box-shadow: 0 4px 15px rgba(26, 18, 8, 0.25);
+    }
+
+    .btn-lock-close:hover {
+      box-shadow: 0 6px 20px rgba(26, 18, 8, 0.35);
+      background: var(--gold);
+      color: #fff;
+    }
+
+    .btn-lock-close:active {
+      transform: scale(0.98);
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Lock Overlay Screen -->
+  <div id="lockOverlay" class="lock-overlay" style="display: none;">
+    <div class="lock-card">
+      <div class="lock-icon" id="lockIcon">🏰</div>
+      <h2 class="lock-title" id="lockTitle">¡Muchas gracias por tu visita!</h2>
+      <p class="lock-text" id="lockText">Tu reseña ha sido copiada al portapapeles y se ha abierto Google Reviews.</p>
+      <div class="lock-instruction" id="lockInstructionBlock">
+        <strong>Paso final obligatorio:</strong> Mantén pulsado sobre la caja de texto en Google y dale a <strong>Pegar</strong> para publicar tu reseña de 5 estrellas.
+      </div>
+      <p class="lock-subtext" id="lockSubtext">¡Ya puedes cerrar esta pestaña de forma segura! El castillo se está preparando para la siguiente gran aventura.</p>
+      <button class="btn-lock-close" id="lockCloseBtn" onclick="closeOrPersuadeTab()">Cerrar pestaña</button>
+      
+      <!-- Contenedor del PIN para días de descanso/fuera de horario -->
+      <div id="pinContainer" style="display: none; margin-top: 0.5rem; width: 100%; flex-direction: column; gap: 0.7rem;">
+        <input type="password" id="pinInput" placeholder="Código de la Corte..." class="custom-select" style="text-align: center; width: 100%; box-sizing: border-box; font-size: 1rem; padding: 0.8rem;">
+        <p id="pinError" style="display: none; color: #d9534f; font-size: 0.8rem; font-weight: bold; margin: 0;"></p>
+        <button class="btn-lock-close" onclick="verifyBypassPin()" style="background: var(--gold); color: #fff; border-color: transparent;">Desbloquear Reino 🗝️</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+
+    <a href="https://www.palaciobylola.com/carta/" target="_blank" rel="noopener noreferrer" class="btn-carta">
+      <span>📖</span> Ver la carta <span class="ext">↗</span>
+    </a>
+
+    <!-- TIME & LENGTH SELECTORS -->
+    <div class="inputs-row" style="margin-top: 0.2rem; align-items: flex-end; animation: fadeUp 0.5s 0.04s ease both;">
+      <div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 0.35rem;">
+        <p class="cs-label"
+          style="text-align: left; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 0.1rem;"
+          title="⏰ Momento de la visita">⏰ Momento de la visita</p>
+        <select id="timeSelect" class="custom-select" onchange="selectTime(this.value)">
+          <option value="Cena">⏰ Momento: Cena</option>
+          <option value="Almuerzo">⏰ Momento: Almuerzo</option>
+        </select>
+      </div>
+      <div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 0.35rem;">
+        <p class="cs-label"
+          style="text-align: left; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 0.1rem;"
+          title="📏 Extensión de la reseña">📏 Extensión de la reseña</p>
+        <select id="lenSelect" class="custom-select" onchange="selectLength(this.value)">
+          <option value="Corta">📏 Extensión: Corto (1 frase)</option>
+          <option value="Medio" selected>📏 Extensión: Medio (2-3 frases)</option>
+          <option value="Larga">📏 Extensión: Largo (4-5 frases)</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- COMPANION & RESTAURANT SELECTORS -->
+    <div class="inputs-row" style="margin-top: 0.2rem; align-items: flex-end; animation: fadeUp 0.5s 0.06s ease both;">
+      <div id="companionSelectorContainer"
+        style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 0.35rem;">
+        <p class="cs-label"
+          style="text-align: left; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 0.1rem;"
+          title="🎭 ¿Qué personaje os visitó?">🎭 ¿Qué personaje os visitó?</p>
+        <select id="compSelect" class="custom-select" onchange="selectCompanion(this.value)">
+          <option value="">Ninguno</option>
+          <option value="Princesa">👑 Princesa Vera</option>
+          <option value="Drako">🐉 Drako</option>
+          <option value="Principe">🤴 P. Martín</option>
+          <option value="Pirata">🏴‍☠️ Brutus</option>
+        </select>
+      </div>
+      <div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 0.35rem;">
+        <p class="cs-label"
+          style="text-align: left; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 0.1rem;"
+          title="🍽️ Recomendaste visitar próximamente:">🍽️ Recomendaste visitar:</p>
+        <select id="restSelect" class="custom-select" onchange="selectRestaurant(this.value)">
+          <option value="">Ninguna</option>
+          <option value="LolaNieves">🍎 Lola Blanca Nieves</option>
+          <option value="Story">🏰 Storyland</option>
+          <option value="Santa">🥩 Santa la Vaca</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- AI CUSTOMIZER -->
+    <div class="ai-section" style="margin-top: 0.5rem;">
+      <div class="inputs-row">
+        <input type="text" id="customKeywords" class="custom-notes"
+          placeholder="Destacar... (Ej: risas, tarta de queso)" style="flex: 1; min-width: 0;">
+        <select id="coworkerSelect" class="custom-select" onchange="selectCoworker(this.value)"
+          style="width: 160px; flex-shrink: 0;">
+          <option value="">Ninguno (Momo)</option>
+          <option value="Jesus">Jesus</option>
+          <option value="Davi">Davi</option>
+          <option value="Favi">Favi</option>
+          <option value="Dani">Dani</option>
+          <option value="Anto">Anto</option>
+          <option value="Will">Will</option>
+          <option value="Cielo">Cielo</option>
+          <option value="Lu">Lu</option>
+          <option value="Aime">Aime</option>
+        </select>
+      </div>
+
+      <div class="cs-chips" style="margin-top: 0.1rem; gap: 0.4rem;">
+        <button class="cs-chip active" id="btnEmojis" onclick="toggleSetting('btnEmojis')">✨ Emojis</button>
+        <button class="cs-chip" id="btnPeach" onclick="togglePeach()">🍑 Momo</button>
+      </div>
+
+      <!-- AI MODEL SELECTOR (ONLY SHOWN IN DEV MODE) -->
+      <div id="devModelSelectContainer" style="display: none; width: 100%; margin-top: 0.2rem; display: none;">
+        <p class="cs-label" style="text-align: left; margin-bottom: 0.25rem; font-size: 0.65rem; color: var(--muted);">
+          🤖 Motor de IA (Pruebas)</p>
+        <select id="aiProviderSelect" class="custom-select"
+          style="width: 100%; font-size: 0.8rem; padding: 0.6rem 1rem;">
+          <option value="cascade">✦ Cascada Inteligente (Auto)</option>
+          <option value="gemini">♊ Gemini 2.5 Flash</option>
+          <option value="groq">⚡ Groq Llama 8B (Instant)</option>
+          <option value="openrouter">🚀 OpenRouter Llama 70B</option>
+        </select>
+      </div>
+
+      <button class="btn-ai-generate" id="btnAIGenerate" onclick="generateNewReview()">
+        <span class="spin">✨</span> Crear reseña mágica
+      </button>
+    </div>
+
+    <!-- SUGERENCIA -->
+    <div class="review-card">
+      <div class="rc-header">
+        <div class="rc-label-wrap">
+          <span class="rc-label">✍️ Sugerencia de reseña</span>
+          <span class="rc-counter" id="statusLabel"><span style="color:var(--gold);">✦</span> Generando
+            Sugerencia</span>
+        </div>
+        <span class="stars">★★★★★</span>
+      </div>
+
+      <p class="review-body" id="reviewBody">
+        <span style="opacity:0.5;">✨ Despertando la magia de la IA...</span>
+      </p>
+
+      <div class="rc-footer">
+        <div class="footer-left">
+          <button class="btn-refresh" id="refreshBtn" onclick="generateNewReview()" title="Sugerencia aleatoria">
+            <span class="spin">↺</span> Otra opción
+          </button>
+          <select class="lang-select" id="langSelect" onchange="changeLanguage(this)" title="Cambiar idioma">
+            <option value="ES">🇪🇸 ES</option>
+            <option value="EN">🇬🇧 EN</option>
+            <option value="FR">🇫🇷 FR</option>
+            <option value="PT">🇵🇹 PT</option>
+            <option value="IT">🇮🇹 IT</option>
+          </select>
+        </div>
+      </div>
+
+      <a href="https://g.page/r/CXmT21Yucy5PEAE/review" target="_blank"
+        rel="noopener noreferrer" class="btn-google-action" id="googleActionBtn" onclick="copyAndStyleBtn(this, event)">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+          <path
+            d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+            fill="currentColor" opacity=".9" />
+          <path
+            d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+            fill="currentColor" opacity=".9" />
+          <path
+            d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"
+            fill="currentColor" opacity=".9" />
+          <path
+            d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
+            fill="currentColor" opacity=".9" />
+        </svg>
+        Copiar y Publicar en Google
+      </a>
+    </div>
+
+    <!-- DEVELOPER TEST MATRIX PANEL -->
+    <div id="devTestPanel" class="review-card"
+      style="display: none; margin-top: 0.5rem; border-color: rgba(217, 83, 79, 0.4); background: linear-gradient(135deg, #fff, #fffefe); gap: 0.8rem; box-shadow: 0 4px 20px rgba(217, 83, 79, 0.05);">
+      <div class="rc-header" style="border-bottom: 1px solid rgba(217, 83, 79, 0.1); padding-bottom: 0.4rem;">
+        <div class="rc-label-wrap">
+          <span class="rc-label"
+            style="color: #d9534f; font-weight: 700; font-size: 0.72rem; letter-spacing: 0.1em;">🛠️ Matriz de Pruebas
+            Multimodelo</span>
+          <span class="rc-counter" style="font-size: 0.6rem; color: #a94442;">Entorno de calibración técnica</span>
+        </div>
+        <span style="font-size: 1rem;">🧪</span>
+      </div>
+
+      <p style="font-size: 0.75rem; line-height: 1.45; color: var(--muted); margin-bottom: 0.1rem;">
+        Ejecuta la matriz de 10 casos extremos para evaluar el rendimiento de consistencia de los diferentes proveedores
+        de IA.
+      </p>
+
+      <div style="display: flex; gap: 0.4rem; width: 100%;">
+        <button class="btn-refresh" id="btnRunAllMatrix" onclick="runWebMatrix()"
+          style="flex: 1; justify-content: center; background: #fff5f5; border-color: #ffb3b7; color: #d9534f; font-weight: 600; padding: 0.6rem; font-size: 0.78rem;">
+          🚀 Ejecutar Matriz (10 Casos)
+        </button>
+        <button class="btn-refresh" id="btnToggleMatrixTable" onclick="toggleMatrixTable()"
+          style="flex-shrink: 0; padding: 0.6rem; font-size: 0.78rem;">
+          👁️ Ver Casos
+        </button>
+      </div>
+
+      <!-- PROGRESS BAR -->
+      <div id="matrixProgressContainer"
+        style="display: none; width: 100%; flex-direction: column; gap: 0.3rem; margin-top: 0.2rem;">
+        <div
+          style="display: flex; justify-content: space-between; font-size: 0.68rem; font-weight: 600; color: #d9534f;">
+          <span id="matrixProgressText">Ejecutando caso 0/10...</span>
+          <span id="matrixPercentText">0%</span>
+        </div>
+        <div style="width: 100%; height: 6px; background: #ffe3e4; border-radius: 3px; overflow: hidden;">
+          <div id="matrixProgressBar"
+            style="width: 0%; height: 100%; background: #d9534f; transition: width 0.3s ease;"></div>
+        </div>
+        <span style="font-size: 0.6rem; color: var(--muted); font-style: italic; text-align: center;">Retardo preventivo
+          activo para esquivar el límite HTTP 429...</span>
+      </div>
+
+      <!-- TEST CASES ACCORDION / LIST -->
+      <div id="matrixCasesList"
+        style="display: none; max-height: 250px; overflow-y: auto; border: 1px solid rgba(217, 83, 79, 0.15); border-radius: 8px; background: #fff; padding: 0.3rem;">
+        <!-- Inject cases dynamically -->
+      </div>
+
+      <!-- MATRIX RESULTS TABLE -->
+      <div id="matrixResultsContainer" style="display: none; width: 100%; margin-top: 0.4rem;">
+        <p class="cs-label" style="text-align: left; margin-bottom: 0.4rem; color: #d9534f; font-size: 0.65rem;">📊
+          Resultados del Test Reciente</p>
+        <div
+          style="max-height: 220px; overflow-y: auto; overflow-x: auto; border: 1px solid rgba(217, 83, 79, 0.2); border-radius: 8px; background: #fff;">
+          <table style="width: 100%; border-collapse: collapse; font-size: 0.7rem; text-align: left;">
+            <thead>
+              <tr style="background: #fff0f0; border-bottom: 1px solid #ffd1d3; color: #a94442; font-weight: 600;">
+                <th style="padding: 0.5rem 0.4rem;">Caso</th>
+                <th style="padding: 0.5rem 0.4rem;">Estado</th>
+                <th style="padding: 0.5rem 0.4rem;">Modelo</th>
+                <th style="padding: 0.5rem 0.4rem;">Alerta detectada</th>
+              </tr>
+            </thead>
+            <tbody id="matrixResultsBody">
+              <!-- Dynamically populated rows -->
+            </tbody>
+          </table>
+        </div>
+        <div id="matrixSummaryRate"
+          style="margin-top: 0.4rem; font-size: 0.72rem; font-weight: 600; color: #d9534f; text-align: right;"></div>
+      </div>
+    </div>
+
+    <p class="footer">¡Gracias por tu visita! 🤍</p>
+  </div>
+
+  <script>
+    const ALLOW_DEV_PANEL = true; // SWITCH_DEV_PANEL
+    const LANG_NAMES = {
+      'ES': 'español (de España)', 'EN': 'inglés', 'FR': 'francés', 'PT': 'portugués', 'IT': 'italiano'
+    };
+
+    const getRandom = (arr) => arr[Math.floor(Math.random() * arr.length)];
+
+    const ARRANQUES_IA = [
+      "Momo directo / agradecer el servicio del camarero Momo que fue un sol.",
+      "algo de la comida / comentar lo rico que estaba todo.",
+      "el ambiente o decoración / comentar el castillo medieval y lo chulo del sitio.",
+      "el show / las luces, la música y el espectáculo medieval.",
+      "disfrazarse / la gracia de ponerse sombreros y capas medievales al llegar.",
+      "frase suelta / empezar de forma muy espontánea y casual."
+    ];
+
+    const REGISTROS_IA = [
+      "muy coloquial / de calle, como si se lo contaras a un amigo por WhatsApp.",
+      "alegre y relajado / destacando el buen rollo y lo bien que lo pasamos.",
+      "directo y breve / sin rodeos, directo al grano.",
+      "espontáneo / fresco y muy natural."
+    ];
+
+    let isLoading = false;
+    let activeCompanion = null;
+    let activeRestaurant = null;
+    let activeLength = 'Medio';
+    let activeTime = 'Cena';
+    let activeCoworker = null;
+    let peachState = 0;
+    let currentLang = 'ES';
+    let originalLang = 'ES';
+    let translationsCache = {};
+    let currentRawReview = '';
+    let currentFinalReview = '';
+
+    function detectTimeByHour() {
+      const currentHour = new Date().getHours();
+      // Si la hora local está entre las 12:00 y las 17:59 (12 y 17 inclusive) es Almuerzo, de lo contrario Cena
+      if (currentHour >= 12 && currentHour < 18) {
+        return 'Almuerzo';
+      }
+      return 'Cena';
+    }
+
+    function parseUrlParams() {
+      const params = new URLSearchParams(window.location.search);
+      const compParam = params.get('comp');
+      const restParam = params.get('rest');
+      const timeParam = params.get('time');
+      const coworkerParam = params.get('coworker');
+
+      if (compParam) {
+        const selectEl = document.getElementById('compSelect');
+        if (selectEl) {
+          selectEl.value = compParam;
+          activeCompanion = compParam;
+        }
+      }
+      if (restParam) {
+        const selectEl = document.getElementById('restSelect');
+        if (selectEl) {
+          selectEl.value = restParam;
+          activeRestaurant = restParam;
+        }
+      }
+      
+      let detectedTime = 'Cena';
+      if (timeParam) {
+        detectedTime = timeParam;
+      } else {
+        detectedTime = detectTimeByHour();
+      }
+      const selectTimeEl = document.getElementById('timeSelect');
+      if (selectTimeEl) {
+        selectTimeEl.value = detectedTime;
+        activeTime = detectedTime;
+      }
+
+      const lenParam = params.get('len');
+      if (lenParam) {
+        const selectEl = document.getElementById('lenSelect');
+        if (selectEl) {
+          selectEl.value = lenParam;
+          activeLength = lenParam;
+        }
+      }
+      if (coworkerParam) {
+        const normalized = coworkerParam.charAt(0).toUpperCase() + coworkerParam.slice(1).toLowerCase();
+        const selectEl = document.getElementById('coworkerSelect');
+        if (selectEl) {
+          for (let i = 0; i < selectEl.options.length; i++) {
+            if (selectEl.options[i].value === normalized) {
+              selectEl.value = normalized;
+              activeCoworker = normalized;
+              break;
+            }
+          }
+        }
+      }
+      // Forzar sincronización de visibilidad de personajes al iniciar
+      selectTime(activeTime);
+    }
+
+    async function generateTextWithFallback(prompt, provider = 'cascade', config = {}) {
+      const bypassPin = localStorage.getItem('momo_review_bypass_pin') || '';
+      const response = await fetch('/api/generate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ prompt, provider, config, bypassPin })
+      });
+
+      if (!response.ok) {
+        let errText = "Error desconocido";
+        try {
+          const errData = await response.json();
+          errText = errData.error || errText;
+        } catch { }
+        throw new Error(errText);
+      }
+
+      const data = await response.json();
+      return { text: data.text, provider: data.provider };
+    }
+
+    function toggleSetting(id) {
+      document.getElementById(id).classList.toggle('active');
+    }
+
+    function togglePeach() {
+      peachState = (peachState + 1) % 3;
+      const btn = document.getElementById('btnPeach');
+
+      if (peachState === 0) {
+        btn.className = 'cs-chip'; btn.innerHTML = '🍑 Momo';
+      } else if (peachState === 1) {
+        btn.className = 'cs-chip active'; btn.innerHTML = '🍑 Momo = Melocotón';
+      } else if (peachState === 2) {
+        btn.className = 'cs-chip active-peach'; btn.innerHTML = '👑 Princesa Peach';
+      }
+    }
+
+    function selectCoworker(val) {
+      activeCoworker = val || null;
+    }
+
+    function selectLength(val) {
+      activeLength = val;
+    }
+
+    function selectTime(val) {
+      activeTime = val;
+      const compContainer = document.getElementById('companionSelectorContainer');
+      if (val === 'Almuerzo') { // Almuerzo
+        if (compContainer) compContainer.style.display = 'none';
+        activeCompanion = null;
+        const compSelect = document.getElementById('compSelect');
+        if (compSelect) compSelect.value = '';
+      } else { // Cena
+        if (compContainer) compContainer.style.display = 'flex';
+      }
+    }
+
+    function selectCompanion(val) {
+      activeCompanion = val || null;
+    }
+
+    function selectRestaurant(val) {
+      activeRestaurant = val || null;
+    }
+
+    function toggleOption(group, val) {
+      if (group === 'comp') { activeCompanion = (activeCompanion === val) ? null : val; }
+      else if (group === 'rest') { activeRestaurant = (activeRestaurant === val) ? null : val; }
+      else if (group === 'len') { activeLength = val; }
+      else if (group === 'time') { activeTime = val; }
+      else if (group === 'coworker') { activeCoworker = (activeCoworker === val) ? null : val; }
+
+      document.querySelectorAll(`[data-group="${group}"]`).forEach(btn => {
+        let isActive = false;
+        if (group === 'len') isActive = (activeLength === btn.dataset.val);
+        else if (group === 'comp') isActive = (activeCompanion === btn.dataset.val);
+        else if (group === 'rest') isActive = (activeRestaurant === btn.dataset.val);
+        else if (group === 'time') isActive = (activeTime === btn.dataset.val);
+        else if (group === 'coworker') isActive = (activeCoworker === btn.dataset.val);
+
+        btn.classList.toggle('active', isActive);
+      });
+    }
+    function renderReview(rawText) {
+      currentRawReview = rawText;
+      currentFinalReview = rawText;
+      const el = document.getElementById('reviewBody');
+      el.classList.add('fading');
+      setTimeout(() => { el.innerHTML = rawText; el.classList.remove('fading'); }, 260);
+    }
+
+    // Constructor de prompt unificado para evitar duplicados
+    function buildPromptFromConfig(config) {
+      const timeVerb = config.activeTime === 'Almuerzo' ? 'comer' : 'cenar';
+      const timeNarrative = config.activeTime === 'Almuerzo' ? 'el almuerzo / la comida' : 'la noche / la cena';
+      const moralejaNarrative = config.activeTime === 'Almuerzo' ? 'el verdadero tesoro fue la comida y el almuerzo' : 'el verdadero tesoro fue la noche';
+      const langName = LANG_NAMES[currentLang] || 'español (de España)';
+
+      // Filtrar arranques si es almuerzo (Almuerzo) para que la IA no empiece hablando de shows
+      const arranquesFiltrados = config.activeTime === 'Almuerzo'
+        ? ARRANQUES_IA.filter(a => !a.includes('show'))
+        : ARRANQUES_IA;
+      const randomArranque = getRandom(arranquesFiltrados);
+      const randomRegistro = getRandom(REGISTROS_IA);
+
+      // Definición estricta de la extensión para evitar desbalances (Corto -> Medio -> Largo)
+      let extInstructions = '';
+      if (config.activeLength === 'Corta') {
+        extInstructions = 'EXACTAMENTE 1 única frase corta y concisa (entre 8 y 15 palabras en total). Está TERMINANTEMENTE PROHIBIDO escribir una segunda frase, usar punto y seguido, usar punto y coma o conectores largos. Sé directo, breve e instantáneo. REGLA DE ENFOQUE ÚNICO: Céntrate únicamente en UN SOLO aspecto (solo Momo, o solo la comida, o solo la decoración) para no exceder bajo ninguna circunstancia el límite de 1 frase y de 8 a 15 palabras en total. No intentes resumir todo el contexto del sitio.';
+      } else if (config.activeLength === 'Larga') {
+        extInstructions = 'EXACTAMENTE 3 o 4 frases completas y fluidas (entre 45 y 65 palabras en total), detallando con soltura la comida medieval, la preciosa decoración del castillo y el servicio inmejorable de Momo.';
+      } else {
+        extInstructions = 'EXACTAMENTE 2 frases breves, equilibradas y muy naturales (entre 20 y 35 palabras en total). Que suene casual, como un par de líneas que escribirías rápido a un colega.';
+      }
+
+      // Lore del sitio diferenciado para Almuerzo y Cena
+      let contextoSitio = '';
+      if (config.activeTime === 'Almuerzo') {
+        contextoSitio = `Restaurante temático en Madrid ambientado en un castillo medieval. El ambiente es mágico, familiar e inmersivo.
+Es la hora del ALMUERZO. A mediodía NO se realiza ningún espectáculo musical, teatral ni show de personajes; los comensales comen tranquilamente en la hermosa ambientación medieval y opcionalmente pueden ponerse gorros y capas graciosas de juego al llegar.
+REGLA CRÍTICA DE ALMUERZO: NUNCA menciones obras de teatro, espectáculos medievales, actores, luces de show, bailes ni personajes disfrazados, ya que a mediodía no hay nada de eso. Céntrate únicamente en la comida medieval, la decoración del castillo, las capas graciosas y el fantástico servicio de Momo.`;
+      } else {
+        contextoSitio = `Restaurante temático en Madrid ambientado en un castillo medieval. El ambiente es mágico, familiar e inmersivo.
+Es la hora de la CENA. Primero se cena y luego hay un espectáculo musical y teatral de fantasía medieval muy chulo con canciones e historia. Opcionalmente los comensales pueden ponerse sombreros y capas graciosas al llegar.
+REGLA CRÍTICA DE REALISMO: No inventes batallas campales, luchas con piratas ni dragones volando por la sala ni cosas exageradas. Tampoco inventes que te disfrazaste de "caballero medieval con armadura", solo son gorros y capas de juego. Mantén la reseña sutil y verosímil.`;
+      }
+
+      let prompt = `[IDENTIDAD]
+      Eres un cliente real que ha ido a ${timeVerb} a un restaurante temático medieval en Madrid. Escribes una reseña en Google Maps muy casual, fresca y espontánea, tal como le contarías tu experiencia de ${timeNarrative} a un amigo por WhatsApp. No uses un lenguaje marketero, artificial, formal ni publicitario.
+
+      [CONTEXTO DEL SITIO — fondo, no guion]
+      ${contextoSitio}
+
+      [FORMA DE ESCRIBIR]
+      — Frases cortas. Alguna incompleta o exclamación corta está muy bien.
+      — Palabras del día a día en España: sitio, mola, majo, oye, una pasada, chulo, nos flipó, la verdad, etc.
+      — Sin estructura visible. Arranca por cualquier punto: Momo, la comida, el ambiente, o las capas (y el show medieval, pero SOLO si es cena).
+      — Sin cierre obligatorio. Puede acabar a mitad de pensamiento o de manera abrupta y casual.
+      — Si suena a folleto corporativo o crítica gastronómica refinada, reescríbelo por completo.
+      — REGLA ESTRICTA DE NOMBRE DEL RESTAURANTE: NUNCA menciones la marca oficial "Palacio by Lola" ni "El Palacio by Lola" en la reseña bajo ninguna circunstancia. Tampoco abuses de "Palacio" a secas. Los clientes reales no repiten el nombre de la ficha donde están opinando. Refiérete al sitio orgánicamente como "el castillo", "el restaurante medieval", "el local", "este sitio" o simplemente NO uses ningún nombre propio.
+      — REGLA DE COMIDA: NO inventes platos específicos que comiste ni que te recomendaron (como cordero, paella, carne, tarta, etc.) a menos que aparezcan explícitamente en KEYWORDS. Si no hay KEYWORDS, solo puedes decir genéricamente que la comida estuvo muy buena, rica, bien de precio, etc., sin dar nombres de platos específicos.
+      — REGLA DE MOMO (MODERACIÓN): Tu mesa fue atendida por el camarero Momo. Menciónalo de forma súper natural, relajada y simpática, pero SIN adularlo de manera exagerada o artificial. Un simple "Momo nos atendió súper bien", "Momo fue muy majo", o "el camarero Momo estuvo atento" es perfecto. NUNCA uses calificativos desmesurados o ridículos como "mi héroe", "el mejor camarero del universo", "experiencia celestial" o "trato celestial". Sé moderado y realista, que sea un elogio simple e informal.
+      — REGLA DE PROHIBICIÓN DE CLICHÉS DE IA: Está TERMINANTEMENTE PROHIBIDO usar palabras trilladas de IA que suenan falsas como: "sencillamente espectacular", "magnífico anfitrión", "experiencia culinaria", "sin duda alguna", "un deleite para los sentidos", "delicia", "recomiendo al 100%", "espectacular presentación", "experiencia inolvidable". Escribe con un lenguaje coloquial español sencillo (ej. "muy guay", "el ambiente mola", "el trato de 10", "comimos la mar de bien", "muy chulo todo").
+      — REGLA DE RECOMENDACIÓN DE RESTAURANTES DEL GRUPO: Si al final se activa el módulo de recomendación, es OBLIGATORIO que integres de forma 100% natural que Momo (o el personal) nos recomendó visitar su otro restaurante. Debes usar obligatoriamente el nombre exacto de la marca en tiempo FUTURO (ya que aún no hemos ido y es solo una recomendación de futuro). Por ejemplo: "Momo nos recomendó ir a Storyland la próxima vez" o "Nos apuntamos la sugerencia de probar Secretos de Lola Blancanieves". Enlaza esta sugerencia de forma casual.
+      — REGLAS DE COHERENCIA Y NATURALIDAD:
+        1. Mantén un hilo conductor lógico y sencillo. Evita saltar de un tema a otro de forma caótica o entremezclar fragmentos de frases inconexas.
+        2. Si hay varios módulos opcionales activos (como camarero adicional, personaje o recomendación de restaurante), combínalos e intégralos con fluidez en frases completas, no como una lista inconexa de oraciones cortas independientes.
+        3. No caigas en contradicciones de tiempo: si es almuerzo (de día), no menciones cenas, espectáculos nocturnos ni palabras de noche; si es cena, habla del show medieval de la noche.
+      — REGLA DE PRIORIDAD: Si hay una recomendación de restaurante activa, esta debe aparecer ineludiblemente, incluso si tienes que recortar o resumir otros detalles de la comida o del castillo para cumplir estrictamente con los límites de extensión.
+
+[VARIABILIDAD — elige al azar en cada generación]
+Punto de arranque (elegido al azar): ${randomArranque}
+Registro (elegido al azar): ${randomRegistro}
+Moraleja: solo a veces, si fluye de forma 100% natural, una frase suelta inspirada en "${moralejaNarrative}". La mayoría de veces no aparece. Nunca literal, nunca forzada.
+
+[CONFIGURACIÓN]
+IDIOMA: ${langName}
+MOMENTO DEL DÍA: ${config.activeTime === 'Cena' ? 'Cena (es de noche, usa palabras de noche/cena)' : 'Almuerzo (es de día/tarde, usa palabras de comida/tarde/almuerzo. NUNCA uses la palabra noche, cena, cenar ni cenamos)'}
+EXTENSIÓN: ${extInstructions}
+EMOJIS: ${config.wantEmojis ? 'sí = 2 o 3 integrados' : 'no = ninguno'}
+OUTPUT: solo el texto de la reseña. Sin título, sin asteriscos, sin explicaciones.
+
+[MÓDULOS OPCIONALES — activar solo los indicados, mezclar en cualquier orden]
+`;
+
+      if (config.keywords) {
+        prompt += `\nKEYWORDS: "${config.keywords}" → entrelazar como anécdota propia, nunca presentar ni "mencionar".\n`;
+      }
+
+      if (config.activeCoworker) {
+        prompt += `\nCAMARERO ADICIONAL DEL EQUIPO (TRABAJADOR): "${config.activeCoworker}" → Es otro camarero/camarera del equipo del restaurante que también nos atendió y ayudó a Momo. Menciónalo brevemente de pasada como parte del personal del restaurante, NUNCA como nuestro amigo ni como alguien que vino a comer con nosotros.\n`;
+      }
+
+      if (peachState === 1) {
+        prompt += `\nMOMO = MELOCOTÓN:
+  casual → comentar que su nombre significa melocotón en japonés, de pasada.\n`;
+      } else if (peachState === 2) {
+        prompt += `\nMOMO = MELOCOTÓN:
+  peach  → igual + guiño espontáneo "¡Hola Princesa Peach!"\n`;
+      }
+
+      // El personaje en mesa solo se activa si es CENA y está configurado
+      if (config.activeTime === 'Cena' && config.activeCompanion) {
+        const charMapping = {
+          'Princesa': 'Princesa Vera   → se acercó a nuestra mesa a saludar, cantar un poco y nos dio unas palabras de motivación muy bonitas. Nos hicimos fotos con ella, super encantadora.',
+          'Drako': 'Drako           → el dragón del espectáculo pasó a saludarnos a la mesa, fue muy divertido y simpático, y nos hicimos fotos con él.',
+          'Principe': 'Príncipe Martín → se acercó a saludarnos a la mesa, muy simpático, nos dio unas palabras motivadoras y nos hicimos fotos.',
+          'Pirata': 'Pirata Brutus   → pasó por la mesa a hacernos reír con bromas divertidas y nos tomamos fotos juntos.'
+        };
+        prompt += `\nPERSONAJE EN MESA (solo uno por reseña, brevemente):
+  ${charMapping[config.activeCompanion]}\n`;
+      }
+
+      if (config.activeRestaurant) {
+        const restInfo = {
+          'LolaNieves': {
+            name: 'Secretos de Lola Blancanieves',
+            details: 'es su otro restaurante temático en Madrid con un show nocturno espectacular. Blancanieves y la Bruja Malvada participan en noches distintas (no juntas).'
+          },
+          'Story': {
+            name: 'Storyland',
+            details: 'es su otro restaurante temático con un show infantil/nocturno donde aparecen personajes mágicos como Vaiana o Rapunzel (cada una en su noche, no juntas).'
+          },
+          'Santa': {
+            name: 'Santa la Vaca',
+            details: 'es otro restaurante temático del grupo, ideal para fin de semana porque el personaje de Maricao va allí los viernes y sábados por la noche.'
+          }
+        };
+        const r = restInfo[config.activeRestaurant];
+        prompt += `\nREQUERIMIENTO CRÍTICO ABSOLUTO — RECOMENDACIÓN DE RESTAURANTE:
+DEBES mencionar obligatoriamente en tu reseña que Momo (o el personal) te recomendó visitar su otro restaurante temático del grupo llamado "${r.name}".
+Información útil para integrarlo (escribe esto en futuro, ya que el cliente aún NO ha ido, solo se lo recomendaron): ${r.details}
+Es un REQUISITO 100% INELUDIBLE. El nombre exacto "${r.name}" DEBE figurar en el texto final de la reseña. Agrégalo de forma fluida, por ejemplo: "Momo nos recomendó visitar ${r.name} en el futuro para ver su show" o "Nos apuntamos la sugerencia de Momo de probar ${r.name} la próxima vez".\n`;
+      }
+
+      return prompt;
+    }
+
+    async function generateNewReview() {
+      if (isLoading) return;
+      isLoading = true;
+
+      translationsCache = {};
+      originalLang = currentLang;
+
+      const btn1 = document.getElementById('refreshBtn');
+      const btn2 = document.getElementById('btnAIGenerate');
+      const originalCustomHtml = btn2.innerHTML;
+
+      btn1.classList.add('loading'); btn1.disabled = true;
+      btn2.innerHTML = '<span class="spin">✨</span> Generando...'; btn2.disabled = true;
+
+      // Show shimmer skeleton loader
+      const el = document.getElementById('reviewBody');
+      el.innerHTML = `
+        <div class="skeleton">
+          <div class="skeleton-line"></div>
+          <div class="skeleton-line"></div>
+          <div class="skeleton-line"></div>
+        </div>
+      `;
+
+      const keywords = document.getElementById('customKeywords').value.trim();
+      const coworker = activeCoworker;
+      const wantEmojis = document.getElementById('btnEmojis').classList.contains('active');
+
+      const config = {
+        activeTime,
+        activeLength,
+        wantEmojis,
+        activeCompanion,
+        activeRestaurant,
+        activeCoworker: coworker,
+        keywords
+      };
+
+      const prompt = buildPromptFromConfig(config);
+
+      try {
+        const providerSelect = document.getElementById('aiProviderSelect');
+        const provider = providerSelect ? providerSelect.value : 'cascade';
+        const result = await generateTextWithFallback(prompt, provider, config);
+        translationsCache[currentLang] = { text: result.text, provider: result.provider, isTranslation: false };
+        document.getElementById('statusLabel').innerHTML = `<span style='color:var(--gold);'>✦</span> Generando Sugerencia (${result.provider})`;
+        renderReview(result.text);
+      } catch (error) {
+        console.error("Error al conectar con los motores de IA:", error);
+        document.getElementById('statusLabel').innerHTML = "<span style='color:red;'>❌ Error API</span>";
+        renderReview(`<span style="color:red; font-weight:bold;">Error de la IA:</span> ${error.message}<br><br><span style="font-size:0.8rem;opacity:0.7;">Revisa la consola del navegador para más detalles (presiona F12).</span>`);
+      } finally {
+        isLoading = false;
+        btn1.classList.remove('loading'); btn1.disabled = false;
+        btn2.innerHTML = originalCustomHtml; btn2.disabled = false;
+      }
+    }
+
+    async function changeLanguage(selectElement) {
+      const newLang = selectElement.value;
+      if (newLang === currentLang || isLoading || !translationsCache[originalLang]) return;
+
+      const cached = translationsCache[newLang];
+      if (cached) {
+        currentLang = newLang;
+        const prefix = cached.isTranslation ? 'Traducida' : 'Generada';
+        document.getElementById('statusLabel').innerHTML = `<span style='color:var(--gold);'>✦</span> ${prefix} por IA (${cached.provider})`;
+        renderReview(cached.text);
+        return;
+      }
+
+      isLoading = true; selectElement.disabled = true;
+
+      const el = document.getElementById('reviewBody');
+      el.innerHTML = `
+        <div class="skeleton">
+          <div class="skeleton-line"></div>
+          <div class="skeleton-line"></div>
+          <div class="skeleton-line"></div>
+        </div>
+      `;
+
+      const sourceLangName = LANG_NAMES[originalLang];
+      const targetLangName = LANG_NAMES[newLang];
+      const textToTranslate = translationsCache[originalLang].text;
+      const prompt = `Actúa como un traductor profesional y nativo. Traduce esta reseña de restaurante del idioma ${sourceLangName} al idioma ${targetLangName}. Mantén el tono entusiasta y natural de quien escribe. Devuelve SOLO la traducción:\n\n${textToTranslate}`;
+
+      try {
+        const providerSelect = document.getElementById('aiProviderSelect');
+        const provider = providerSelect ? providerSelect.value : 'cascade';
+        const result = await generateTextWithFallback(prompt, provider);
+        translationsCache[newLang] = { text: result.text, provider: result.provider, isTranslation: true };
+        currentLang = newLang;
+        document.getElementById('statusLabel').innerHTML = `<span style='color:var(--gold);'>✦</span> Traducida por IA (${result.provider})`;
+        renderReview(result.text);
+      } catch (error) {
+        selectElement.value = currentLang;
+        console.error("Error al traducir:", error);
+        document.getElementById('statusLabel').innerHTML = "<span style='color:red;'>❌ Error Traducción</span>";
+        renderReview(`<span style="color:red; font-weight:bold;">Error de traducción:</span> ${error.message}`);
+      } finally {
+        isLoading = false; selectElement.disabled = false;
+      }
+    }
+
+    function copyAndStyleBtn(linkElement, event) {
+      if (!currentFinalReview) { event.preventDefault(); return; }
+
+      const textArea = document.createElement("textarea");
+      textArea.value = currentFinalReview;
+      textArea.style.position = "fixed"; textArea.style.top = "-9999px";
+      document.body.appendChild(textArea);
+      textArea.focus(); textArea.select();
+
+      try {
+        document.execCommand('copy');
+        if (navigator.vibrate) navigator.vibrate([30, 20, 30]);
+
+        const originalHTML = linkElement.innerHTML;
+        linkElement.innerHTML = '✓ ¡Copiado! Redirigiendo... 📋';
+        linkElement.classList.add('copied');
+
+        // Guardar bloqueo de persistencia por 24 horas en localStorage
+        localStorage.setItem('momo_review_locked_until', Date.now() + 24 * 60 * 60 * 1000);
+
+        // Mostrar la pantalla medieval de bloqueo tras 800ms
+        setTimeout(() => {
+          showLockScreen("success");
+          // Intentar cerrar la pestaña mediante script
+          window.close();
+        }, 800);
+
+      } catch (err) { console.error('Fallo al copiar', err); }
+
+      document.body.removeChild(textArea);
+    }
+
+    // --- SISTEMA DE BLOQUEO Y CIERRE ---
+    let idleTimer = null;
+    const IDLE_TIME_LIMIT = 10 * 60 * 1000; // 10 minutos en ms
+
+    function startIdleTimer() {
+      if (idleTimer) clearTimeout(idleTimer);
+      idleTimer = setTimeout(() => {
+        showLockScreen("idle");
+      }, IDLE_TIME_LIMIT);
+    }
+
+    function resetIdleTimer() {
+      // Solo resetear si la pantalla no está bloqueada actualmente
+      const overlay = document.getElementById('lockOverlay');
+      if (overlay && overlay.style.display !== 'flex') {
+        startIdleTimer();
+      }
+    }
+
+    // Agregar escuchadores de eventos para reiniciar el timer de inactividad ante cualquier interactividad
+    ['mousedown', 'mousemove', 'keypress', 'scroll', 'touchstart'].forEach(eventName => {
+      document.addEventListener(eventName, resetIdleTimer, true);
+    });
+
+    function showLockScreen(type) {
+      const overlay = document.getElementById('lockOverlay');
+      const icon = document.getElementById('lockIcon');
+      const title = document.getElementById('lockTitle');
+      const text = document.getElementById('lockText');
+      const instBlock = document.getElementById('lockInstructionBlock');
+      const subtext = document.getElementById('lockSubtext');
+      const closeBtn = document.getElementById('lockCloseBtn');
+      const pinContainer = document.getElementById('pinContainer');
+
+      if (!overlay) return;
+
+      // Resetear visibilidad por defecto de los botones
+      if (pinContainer) pinContainer.style.display = 'none';
+      if (closeBtn) closeBtn.style.display = 'block';
+
+      if (type === "success") {
+        icon.innerHTML = "🏰";
+        title.innerHTML = "¡Muchas gracias por tu visita!";
+        text.innerHTML = "Tu reseña ha sido copiada al portapapeles y se ha abierto Google Reviews.";
+        instBlock.style.display = "block";
+        instBlock.innerHTML = `<strong>Paso final obligatorio:</strong> Mantén pulsado sobre la caja de texto en Google y dale a <strong>Pegar</strong> para publicar tu reseña de 5 estrellas.`;
+        subtext.innerHTML = "¡Ya puedes cerrar esta pestaña de forma segura! El castillo se está preparando para la siguiente gran aventura.";
+        closeBtn.innerHTML = "Cerrar pestaña";
+      } else if (type === "idle") {
+        icon.innerHTML = "⏳";
+        title.innerHTML = "Sesión medieval expirada";
+        text.innerHTML = "Por seguridad y para liberar recursos, esta sesión de reseña se ha cerrado automáticamente debido a inactividad.";
+        instBlock.style.display = "none";
+        subtext.innerHTML = "Si aún deseas generar tu reseña, puedes cerrar esta pestaña y volver a escanear tu código QR en tu próxima visita.";
+        closeBtn.innerHTML = "Entendido, cerrar pestaña";
+      } else if (type === "persistence") {
+        icon.innerHTML = "🔒";
+        title.innerHTML = "Acceso cerrado temporalmente";
+        text.innerHTML = "¡Gracias! Tu opinión ya ha sido copiada y publicada hoy. El sistema se reactivará automáticamente para tu próxima visita.";
+        instBlock.style.display = "none";
+        subtext.innerHTML = "¡Ya puedes cerrar esta pestaña! Que tengas un excelente día.";
+        closeBtn.innerHTML = "Cerrar pestaña";
+      } else if (type === "restDay") {
+        icon.innerHTML = "💤";
+        title.innerHTML = "Descanso en el Reino";
+        text.innerHTML = "Nuestras princesas, príncipes, piratas y dragones se encuentran descansando para preparar la próxima aventura mágica.";
+        instBlock.style.display = "none";
+        subtext.innerHTML = "Si eres del equipo de la corte, introduce tu código de acceso para realizar pruebas.";
+        if (closeBtn) closeBtn.style.display = "none";
+        if (pinContainer) pinContainer.style.display = "flex";
+      }
+
+      overlay.style.display = 'flex';
+      
+      // Detener el temporizador de inactividad ya que ya estamos bloqueados
+      if (idleTimer) clearTimeout(idleTimer);
+    }
+
+    function closeOrPersuadeTab() {
+      // Intentar cerrar la pestaña mediante script
+      window.close();
+      
+      // Guiar al usuario a cerrarla de forma manual en móvil si falla window.close()
+      setTimeout(() => {
+        alert("Para finalizar, cierra esta pestaña del navegador en tu móvil manualmente. ¡Gracias! 🤍");
+      }, 300);
+    }
+
+    function checkPersistenceLock() {
+      const lockUntil = localStorage.getItem('momo_review_locked_until');
+      if (lockUntil) {
+        const remainingTime = parseInt(lockUntil, 10) - Date.now();
+        if (remainingTime > 0) {
+          showLockScreen("persistence");
+          return true; // Bloqueado
+        } else {
+          // Expirado, limpiar
+          localStorage.removeItem('momo_review_locked_until');
+        }
+      }
+      return false; // No bloqueado
+    }
+
+    function isBlockedTime() {
+      const now = new Date();
+      const options = { timeZone: 'Europe/Madrid', hour: '2-digit', minute: '2-digit', weekday: 'short', hour12: false };
+      const formatter = new Intl.DateTimeFormat('en-US', options);
+      const parts = formatter.formatToParts(now);
+      
+      let weekday = '';
+      let hour = 0;
+      
+      for (const part of parts) {
+        if (part.type === 'weekday') weekday = part.value; // 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'
+        if (part.type === 'hour') hour = parseInt(part.value, 10);
+      }
+      
+      const isRestDay = weekday === 'Mon' || weekday === 'Tue';
+      const isWorkingShift = (hour >= 12 && hour < 18) || (hour >= 20 && hour < 24);
+      
+      return isRestDay || !isWorkingShift;
+    }
+
+    function verifyBypassPin() {
+      const pinInput = document.getElementById('pinInput');
+      const pinError = document.getElementById('pinError');
+      if (!pinInput) return;
+      
+      const pin = pinInput.value.trim();
+      if (pin === "2055") {
+        localStorage.setItem('momo_review_bypass_pin', "2055");
+        // Ocultar pantalla de bloqueo
+        const overlay = document.getElementById('lockOverlay');
+        if (overlay) overlay.style.display = 'none';
+        
+        // Reiniciar el timer de inactividad
+        resetIdleTimer();
+        console.log("[Seguridad] 🔑 PIN correcto. Acceso concedido al Reino.");
+      } else {
+        if (pinError) {
+          pinError.innerHTML = "❌ Código incorrecto. Vuelve a intentarlo.";
+          pinError.style.display = "block";
+        }
+      }
+    }
+
+    // --- MÓDULO DE MATRIZ DE PRUEBAS ---
+    const testMatrix = [
+      {
+        id: "TC-01",
+        desc: "Mínimo (Almuerzo, sin extras, con emojis, duración corta)",
+        config: { activeTime: "Almuerzo", activeLength: "Corta", wantEmojis: true, activeCompanion: null, activeRestaurant: null, activeCoworker: null, keywords: "" }
+      },
+      {
+        id: "TC-02",
+        desc: "Cena + Princesa Vera + Sin Emojis",
+        config: { activeTime: "Cena", activeLength: "Medio", wantEmojis: false, activeCompanion: "Princesa", activeRestaurant: null, activeCoworker: null, keywords: "" }
+      },
+      {
+        id: "TC-03",
+        desc: "Almuerzo + Storyland Recomendado + Sin Emojis",
+        config: { activeTime: "Almuerzo", activeLength: "Medio", wantEmojis: false, activeCompanion: null, activeRestaurant: "Story", activeCoworker: null, keywords: "" }
+      },
+      {
+        id: "TC-04",
+        desc: "Cena + Drako + Camarero Jesús + Con Emojis + Larga",
+        config: { activeTime: "Cena", activeLength: "Larga", wantEmojis: true, activeCompanion: "Drako", activeRestaurant: null, activeCoworker: "Jesus", keywords: "" }
+      },
+      {
+        id: "TC-05",
+        desc: "Almuerzo + Camarera Favi + Sin Emojis (Verificar Favi como trabajadora)",
+        config: { activeTime: "Almuerzo", activeLength: "Medio", wantEmojis: false, activeCompanion: null, activeRestaurant: null, activeCoworker: "Favi", keywords: "" }
+      },
+      {
+        id: "TC-06",
+        desc: "Cena + Pirata Brutus + LolaNieves Recomendado + Emojis + Extrema",
+        config: { activeTime: "Cena", activeLength: "Larga", wantEmojis: true, activeCompanion: "Pirata", activeRestaurant: "LolaNieves", activeCoworker: null, keywords: "" }
+      },
+      {
+        id: "TC-07",
+        desc: "Almuerzo + Keywords específicas ('tarta de zanahoria, terraza, risas')",
+        config: { activeTime: "Almuerzo", activeLength: "Medio", wantEmojis: true, activeCompanion: null, activeRestaurant: null, activeCoworker: null, keywords: "tarta de zanahoria, terraza, risas" }
+      },
+      {
+        id: "TC-08",
+        desc: "Cena + Príncipe Martín + Santa la Vaca Recomendado + Camarera Dani + Sin Emojis",
+        config: { activeTime: "Cena", activeLength: "Larga", wantEmojis: false, activeCompanion: "Principe", activeRestaurant: "Santa", activeCoworker: "Dani", keywords: "" }
+      },
+      {
+        id: "TC-09",
+        desc: "Almuerzo + Emojis desactivados + Extensión Corta (Súper conciso)",
+        config: { activeTime: "Almuerzo", activeLength: "Corta", wantEmojis: false, activeCompanion: null, activeRestaurant: null, activeCoworker: null, keywords: "" }
+      },
+      {
+        id: "TC-10",
+        desc: "Cena + Todo Activado (Drako, Storyland, Camarera Cielo, Keywords: 'espectáculo, tarta de queso')",
+        config: { activeTime: "Cena", activeLength: "Larga", wantEmojis: true, activeCompanion: "Drako", activeRestaurant: "Story", activeCoworker: "Cielo", keywords: "espectáculo, tarta de queso" }
+      }
+    ];
+
+    function loadTestCase(id) {
+      const tc = testMatrix.find(t => t.id === id);
+      if (!tc) return;
+
+      // 1. Companion
+      document.getElementById('compSelect').value = tc.config.activeCompanion || "";
+      activeCompanion = tc.config.activeCompanion || null;
+
+      // 2. Restaurant
+      document.getElementById('restSelect').value = tc.config.activeRestaurant || "";
+      activeRestaurant = tc.config.activeRestaurant || null;
+
+      // 3. Length
+      const mappedLen = tc.config.activeLength === "Normal" || tc.config.activeLength === "Media" || tc.config.activeLength === "Medio" ? "Medio" : (tc.config.activeLength === "Corta" ? "Corta" : "Larga");
+      document.getElementById('lenSelect').value = mappedLen;
+      activeLength = mappedLen;
+
+      // 4. Time
+      document.getElementById('timeSelect').value = tc.config.activeTime;
+      activeTime = tc.config.activeTime;
+      // Invocamos selectTime para que oculte/muestre los controles de personajes
+      selectTime(tc.config.activeTime);
+
+      // 5. Coworker
+      document.getElementById('coworkerSelect').value = tc.config.activeCoworker || "";
+      activeCoworker = tc.config.activeCoworker || null;
+
+      // 6. Keywords
+      document.getElementById('customKeywords').value = tc.config.keywords || "";
+
+      // 7. Emojis
+      const btnEmojis = document.getElementById('btnEmojis');
+      if (tc.config.wantEmojis) {
+        btnEmojis.classList.add('active');
+      } else {
+        btnEmojis.classList.remove('active');
+      }
+
+      console.log(`[Dev] Caso ${tc.id} cargado en controles.`);
+
+      // Feedback visual rápido
+      const el = document.getElementById('reviewBody');
+      el.innerHTML = `<span style="color:#d9534f; font-weight:600;">🔌 ¡Caso ${tc.id} cargado con éxito!</span><br><span style="font-size:0.8rem; opacity:0.8;">Configuración: ${tc.desc}. Haz clic en "Crear reseña mágica" para testear este caso.</span>`;
+    }
+
+    function renderMatrixCasesList() {
+      const container = document.getElementById('matrixCasesList');
+      container.innerHTML = '';
+      testMatrix.forEach(tc => {
+        const item = document.createElement('div');
+        item.style.padding = '0.45rem';
+        item.style.borderBottom = '1px solid #f5f5f5';
+        item.style.display = 'flex';
+        item.style.justifyContent = 'space-between';
+        item.style.alignItems = 'center';
+        item.style.fontSize = '0.72rem';
+
+        item.innerHTML = `
+          <div style="flex: 1; padding-right: 0.5rem; color: #555;">
+            <strong style="color: #d9534f;">${tc.id}</strong>: ${tc.desc}
+          </div>
+          <button class="btn-refresh" onclick="loadTestCase('${tc.id}')" style="font-size: 0.65rem; border-color: rgba(217, 83, 79, 0.3); color: #d9534f; padding: 0.2rem 0.4rem; white-space: nowrap;">
+            🔌 Cargar
+          </button>
+        `;
+        container.appendChild(item);
+      });
+    }
+
+    function toggleMatrixTable() {
+      const container = document.getElementById('matrixCasesList');
+      const btn = document.getElementById('btnToggleMatrixTable');
+      if (container.style.display === 'none') {
+        container.style.display = 'block';
+        btn.innerText = '🙈 Ocultar Casos';
+      } else {
+        container.style.display = 'none';
+        btn.innerText = '👁️ Ver Casos';
+      }
+    }
+
+    async function runWebMatrix() {
+      if (isLoading) return;
+      isLoading = true;
+
+      const providerSelect = document.getElementById('aiProviderSelect');
+      const provider = providerSelect ? providerSelect.value : 'cascade';
+
+      // Inicializar interfaz de resultados
+      document.getElementById('matrixProgressContainer').style.display = 'flex';
+      document.getElementById('matrixResultsContainer').style.display = 'block';
+      const resultsBody = document.getElementById('matrixResultsBody');
+      resultsBody.innerHTML = '';
+      document.getElementById('matrixSummaryRate').innerText = '';
+
+      const btnRun = document.getElementById('btnRunAllMatrix');
+      const originalText = btnRun.innerText;
+      btnRun.disabled = true;
+      btnRun.innerText = '🧪 Ejecutando matriz...';
+
+      let passedCount = 0;
+
+      for (let i = 0; i < testMatrix.length; i++) {
+        const tc = testMatrix[i];
+        const finishedCount = i + 1;
+
+        // Actualizar barra de progreso
+        const percent = Math.round((i / testMatrix.length) * 100);
+        document.getElementById('matrixProgressBar').style.width = `${percent}%`;
+        document.getElementById('matrixProgressText').innerText = `Ejecutando ${tc.id} (${finishedCount}/10): ${tc.desc}`;
+        document.getElementById('matrixPercentText').innerText = `${percent}%`;
+
+        // Retardo preventivo de 7 segundos a partir del segundo caso para evitar rate limits
+        if (i > 0) {
+          await new Promise(r => setTimeout(r, 7000));
+        }
+
+        const prompt = buildPromptFromConfig(tc.config);
+
+        let status = "✅ PASÓ";
+        let color = "#4CAF82";
+        let obs = "Coherencia perfecta.";
+        let generatedText = "";
+
+        try {
+          const result = await generateTextWithFallback(prompt, provider, tc.config);
+          generatedText = result.text;
+
+          // Analizar consistencia
+          const textLower = generatedText.toLowerCase();
+          const alerts = [];
+
+          // 1. Almuerzo temporal
+          if (tc.config.activeTime === "Almuerzo") {
+            if (textLower.includes("noche") || textLower.includes("cena") || textLower.includes("cenar") || textLower.includes("cenamos")) {
+              const isComparative = textLower.includes("por la noche también") || textLower.includes("abren de noche") || textLower.includes("show nocturno") || textLower.includes("espectáculo nocturno") || textLower.includes("recomendado para la noche") || textLower.includes("volver de noche");
+              if (!isComparative) {
+                alerts.push("Temporal: noche en Almuerzo");
+              }
+            }
+          }
+          // 2. Alucinación de comida
+          const platosSueltos = ["paella", "cordero", "tarta", "carne", "croquetas", "pasta"];
+          if (!tc.config.keywords) {
+            for (const p of platosSueltos) {
+              if (textLower.includes(p)) {
+                alerts.push(`Inventó plato '${p}'`);
+              }
+            }
+          }
+          // 3. Momo regalos/promesas
+          if (textLower.includes("nota de") || textLower.includes("promesa") || textLower.includes("esperando que") || textLower.includes("regalo")) {
+            alerts.push("Alucinación Momo");
+          }
+          // 4. Staff vs Compañero
+          if (tc.config.activeCoworker === "Favi") {
+            if (textLower.includes("con favi") || textLower.includes("mi amigo favi")) {
+              alerts.push("Favi como amigo");
+            }
+          }
+          // 5. Recomendación
+          if (tc.config.activeRestaurant === "Story") {
+            if (!textLower.includes("storyland")) {
+              alerts.push("Sin Storyland");
+            }
+          }
+
+          if (alerts.length > 0) {
+            status = "⚠️ ALERTA";
+            color = "#f0ad4e";
+            obs = alerts.join(', ');
+          } else {
+            passedCount++;
+          }
+        } catch (err) {
+          status = "❌ FALLÓ";
+          color = "#d9534f";
+          obs = err.message;
+        }
+
+        // Agregar fila interactiva a la tabla
+        const row = document.createElement('tr');
+        row.style.borderBottom = '1px solid rgba(217, 83, 79, 0.1)';
+        row.innerHTML = `
+          <td style="padding: 0.5rem 0.4rem; font-weight:600; color:#333;" title="${tc.desc}">${tc.id}</td>
+          <td style="padding: 0.5rem 0.4rem; color: ${color}; font-weight:600;">${status}</td>
+          <td style="padding: 0.5rem 0.4rem; opacity: 0.7;">${provider.toUpperCase()}</td>
+          <td style="padding: 0.5rem 0.4rem; max-width: 130px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: #555;" title="${obs}">${obs}</td>
+        `;
+        resultsBody.appendChild(row);
+      }
+
+      // Finalizar barra
+      document.getElementById('matrixProgressBar').style.width = `100%`;
+      document.getElementById('matrixPercentText').innerText = `100%`;
+      document.getElementById('matrixProgressText').innerText = `¡Matriz completada!`;
+
+      // Resumen final
+      const successRate = Math.round((passedCount / testMatrix.length) * 100);
+      document.getElementById('matrixSummaryRate').innerHTML = `Consistencia: <span style="font-size: 0.95rem; color: ${successRate > 80 ? '#4CAF82' : '#d9534f'}">${successRate}%</span> (${passedCount}/10 correctos)`;
+
+      btnRun.disabled = false;
+      btnRun.innerText = originalText;
+      isLoading = false;
+    }
+
+    window.onload = () => {
+      // 1. Comprobar bloqueo de descanso / fuera de horario
+      const hasBypass = localStorage.getItem('momo_review_bypass_pin') === '2055';
+      if (isBlockedTime() && !hasBypass) {
+        showLockScreen("restDay");
+        return;
+      }
+
+      // 2. Comprobar bloqueo persistente de 24 horas
+      const isLocked = checkPersistenceLock();
+      if (isLocked) return;
+
+      // 3. Iniciar temporizador de inactividad
+      startIdleTimer();
+
+      parseUrlParams();
+
+      // Verificar si se entra en modo desarrollador a través del parámetro de URL y está permitido
+      const urlParams = new URLSearchParams(window.location.search);
+      const isDevMode = ALLOW_DEV_PANEL && (urlParams.get('dev') === 'true' || urlParams.get('test') === 'true');
+      if (isDevMode) {
+        document.getElementById('devModelSelectContainer').style.display = 'block';
+        document.getElementById('devTestPanel').style.display = 'flex';
+        renderMatrixCasesList();
+      }
+
+      const el = document.getElementById('reviewBody');
+      el.innerHTML = '<span style="opacity:0.6;">👇 ¡Hola! Selecciona tus opciones arriba y haz clic en "Crear reseña mágica" cuando estés listo para generar tu reseña con IA.</span>';
+    };
+  </script>
+</body>
+
+</html>
