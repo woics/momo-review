@@ -899,11 +899,22 @@
   }
 
   document.getElementById('report-month').addEventListener('change', applyMonthFilter);
-  document.getElementById('kpi-indirect-card').addEventListener('click', (e) => {
-    const cb = document.getElementById('toggle-indirect');
-    cb.checked = !cb.checked;
-    applyMonthFilter();
-  });
+  const btnToggle = document.getElementById('btn-toggle-indirect');
+  const chkToggle = document.getElementById('toggle-indirect');
+  
+  if (btnToggle && chkToggle) {
+    btnToggle.addEventListener('click', () => {
+      chkToggle.checked = !chkToggle.checked;
+      if (chkToggle.checked) {
+        btnToggle.classList.add('active');
+        btnToggle.innerHTML = 'Restar de mis metas &larr;';
+      } else {
+        btnToggle.classList.remove('active');
+        btnToggle.innerHTML = 'Sumar a mis metas &rarr;';
+      }
+      applyMonthFilter();
+    });
+  }
 
   // ─── Carga principal ─────────────────────────────────────────────────────────
   async function loadData() {
@@ -924,9 +935,7 @@
     renderMomoGrid();
     document.getElementById('momo-grid').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   };
-
-  document.getElementById('refresh-btn').addEventListener('click', loadData);
-
+  // El botón de actualizar fue removido, se actualiza con F5
   document.querySelectorAll('.period-tab').forEach(tab => {
     tab.addEventListener('click', () => {
       document.querySelectorAll('.period-tab').forEach(t => t.classList.remove('active'));
