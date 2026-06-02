@@ -1003,11 +1003,26 @@
       };
 
       const originalApp = document.querySelector('.app');
-      const clone = originalApp.cloneNode(true);
-      clone.style.maxWidth = '1080px';
-      clone.querySelectorAll('.no-print').forEach(n => n.remove());
+      const originalPrintOnly = document.querySelector('.print-only');
       
-      const clonedHeader = clone.querySelector('.header');
+      const cloneWrapper = document.createElement('div');
+      cloneWrapper.style.maxWidth = '1080px';
+      cloneWrapper.style.margin = '0 auto';
+      cloneWrapper.style.backgroundColor = document.documentElement.getAttribute('data-theme') === 'dark' ? '#08080a' : '#fcfcfc';
+
+      const cloneApp = originalApp.cloneNode(true);
+      const clonePrintOnly = originalPrintOnly.cloneNode(true);
+      
+      cloneWrapper.appendChild(cloneApp);
+      cloneWrapper.appendChild(clonePrintOnly);
+
+      // Simular CSS de @media print
+      cloneWrapper.querySelectorAll('.no-print, .header-actions, .period-tabs, .pagination, .category-tabs, .momo-grid').forEach(n => {
+        if(n) n.style.display = 'none';
+      });
+      if(clonePrintOnly) clonePrintOnly.style.display = 'block';
+      
+      const clonedHeader = cloneWrapper.querySelector('.header');
       if (clonedHeader) {
         clonedHeader.style.position = 'static';
         clonedHeader.style.marginTop = '0';
@@ -1015,7 +1030,7 @@
       
       // Clonar contenido de canvas (html2canvas lo necesita)
       const origCanvases = originalApp.querySelectorAll('canvas');
-      const cloneCanvases = clone.querySelectorAll('canvas');
+      const cloneCanvases = cloneWrapper.querySelectorAll('canvas');
       origCanvases.forEach((origCanvas, i) => {
         cloneCanvases[i].getContext('2d').drawImage(origCanvas, 0, 0);
       });
@@ -1027,10 +1042,10 @@
       wrapper.style.zIndex = '-9999';
       wrapper.style.opacity = '0.001';
       wrapper.style.pointerEvents = 'none';
-      wrapper.appendChild(clone);
+      wrapper.appendChild(cloneWrapper);
       document.body.appendChild(wrapper);
 
-      const pdfBlob = await html2pdf().set(opt).from(clone).outputPdf('blob');
+      const pdfBlob = await html2pdf().set(opt).from(cloneWrapper).outputPdf('blob');
       sharedPdfFile = new File([pdfBlob], opt.filename, { type: 'application/pdf' });
       
       document.body.removeChild(wrapper);
