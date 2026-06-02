@@ -992,16 +992,33 @@
 
       const text = `Reporte de Reseñas: ${monthLabel}\nActualizado: ${new Date().toLocaleDateString('es-ES')}\n\nResumen:\n⭐ ${totalMomo} reseñas verificadas\n   - ${stars5} reseñas de 5 estrellas\n   - ${stars4} reseñas de 4 estrellas\n📈 Valoración media: ${avg}/5\n👥 ${indirects} opiniones de acompañantes adicionales\n\n🎯 Objetivo de reseñas para bono alcanzado.\n\nMira el reporte completo aquí:`;
       const url = window.location.href;
+      const fullText = text + '\n' + url;
       
-      await navigator.clipboard.writeText(text + '\n' + url);
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(fullText);
+      } else {
+        const textArea = document.createElement("textarea");
+        textArea.value = fullText;
+        textArea.style.position = "fixed";
+        textArea.style.left = "-9999px";
+        document.body.appendChild(textArea);
+        textArea.focus();
+        textArea.select();
+        document.execCommand('copy');
+        textArea.remove();
+      }
+      
       // Opcional: mostrar un pequeño feedback visual de que se ha copiado
       console.log('Resumen copiado al portapapeles');
     } catch (e) {
       console.warn('No se pudo copiar al portapapeles', e);
     }
     
-    // Iniciar el diálogo nativo de impresión/PDF del navegador
-    window.print();
+    // Iniciar el diálogo nativo de impresión/PDF del navegador con un pequeñísimo delay
+    // para evitar que el bloqueo del diálogo cancele la operación asíncrona del portapapeles en móviles.
+    setTimeout(() => {
+      window.print();
+    }, 400);
   }
 
   document.querySelectorAll('.period-tab').forEach(tab => {
