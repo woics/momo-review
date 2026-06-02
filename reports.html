@@ -369,11 +369,12 @@
         </div>
       </div>
       
-      <div style="display:flex; align-items:center; justify-content:space-between; margin:1rem 0 0.5rem 0;">
-        <div class="kpi-val" id="kpi-indirect" style="font-size:3rem; margin:0;">—</div>
-        <input type="checkbox" id="toggle-indirect" class="toggle-switch" title="Sumar/Restar a mis metas">
-      </div>
-      <p style="font-size:0.75rem; color:var(--muted); line-height:1.5; margin-top:auto;">Sumar estas opiniones a mis metas del periodo actual.</p>
+      <div class="kpi-val" id="kpi-indirect" style="font-size:3rem; margin:1rem 0 0.5rem 0;">—</div>
+      <p style="font-size:0.75rem; color:var(--muted); line-height:1.5;">Opiniones de comensales sentados en mi mesa. Puedes sumarlas a tus metas del periodo.</p>
+      <button class="toggle-btn" id="btn-toggle-indirect">
+        Sumar a mis metas &rarr;
+      </button>
+      <input type="checkbox" id="toggle-indirect" style="display:none;">
     </div>
   </div>
 
@@ -810,7 +811,17 @@
     // Tabla de impresión (completa)
     if (printTableBody) {
       const pc = document.getElementById('print-counter');
-      if(pc) pc.textContent = `${filteredReviews.length} / ${momoReviews.length}`;
+      if(pc) pc.textContent = `${filteredReviews.length} reseñas válidas`;
+      
+      const pmsg = document.getElementById('print-indirect-msg');
+      if(pmsg) {
+        const indirects = momoReviews.filter(r => r.isIndirect).length;
+        if(indirects > 0) {
+          pmsg.innerHTML = `★ Total final contabilizado: <strong>${momoReviews.length}</strong> (incluye ${indirects} por acompañantes de mesa).<br><span style="color:#9ca3af;">Total neto sin acompañantes: ${momoReviews.length - indirects} reseñas.</span>`;
+        } else {
+          pmsg.innerHTML = `★ Total final contabilizado: <strong>${momoReviews.length}</strong> reseñas (sin contar acompañantes de mesa).`;
+        }
+      }
       printTableBody.innerHTML = filteredReviews.map(rev => {
         const d = rev.scraped_at ? formatDateLabel(rev.scraped_at) : '';
         const stars = '★'.repeat(rev.rating) + '☆'.repeat(5 - rev.rating);
@@ -908,9 +919,20 @@
   }
 
   document.getElementById('report-month').addEventListener('change', applyMonthFilter);
+  const btnToggle = document.getElementById('btn-toggle-indirect');
   const chkToggle = document.getElementById('toggle-indirect');
-  if (chkToggle) {
-    chkToggle.addEventListener('change', applyMonthFilter);
+  if (btnToggle && chkToggle) {
+    btnToggle.addEventListener('click', () => {
+      chkToggle.checked = !chkToggle.checked;
+      if (chkToggle.checked) {
+        btnToggle.classList.add('active');
+        btnToggle.innerHTML = 'Restar de mis metas &larr;';
+      } else {
+        btnToggle.classList.remove('active');
+        btnToggle.innerHTML = 'Sumar a mis metas &rarr;';
+      }
+      applyMonthFilter();
+    });
   }
 
   // ─── Carga principal ─────────────────────────────────────────────────────────
@@ -993,9 +1015,12 @@
 
 <!-- Estructura para Impresión (Tabla de reseñas completa) -->
 <div class="print-only">
-  <div style="display:flex; justify-content:space-between; align-items:baseline; margin-top:2rem; padding-bottom:1rem; border-bottom:1px solid #e5e7eb; margin-bottom:1rem;">
-    <h2 style="font-size:1.1rem; font-weight:700; color:#111827;">Listado de reseñas</h2>
-    <div style="font-size:0.8rem; color:#6b7280;" id="print-counter">0 / 0</div>
+  <div style="margin-top:2rem; padding-bottom:1rem; border-bottom:1px solid #e5e7eb; margin-bottom:1rem;">
+    <div style="display:flex; justify-content:space-between; align-items:baseline;">
+      <h2 style="font-size:1.1rem; font-weight:700; color:#111827; margin:0;">Listado de reseñas</h2>
+      <div style="font-size:0.8rem; color:#6b7280; font-weight:600;" id="print-counter">0 / 0</div>
+    </div>
+    <div id="print-indirect-msg" style="font-size:0.75rem; color:#4b5563; margin-top:6px;"></div>
   </div>
   <table class="print-reviews-table">
     <thead>
