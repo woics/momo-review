@@ -941,6 +941,7 @@
     renderGoals();
     renderChart(activePeriod);
     renderMomoGrid();
+    triggerPdfPregen();
   }
 
   document.getElementById('report-month').addEventListener('change', applyMonthFilter);
@@ -979,7 +980,64 @@
     renderMomoGrid();
     document.getElementById('momo-grid').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   };
+  // --- PRE-GENERACIÓN DE PDF PARA COMPARTIR EN 1 TOQUE ---
   let sharedPdfFile = null;
+  let pdfGenTimer = null;
+  let isGeneratingPdf = false;
+
+  async function pregeneratePdf() {
+    if (isGeneratingPdf) return;
+    isGeneratingPdf = true;
+    try {
+      const select = document.getElementById('report-month');
+      const monthLabel = select.options[select.selectedIndex].text;
+      
+      const opt = {
+        margin: 10,
+        filename: `Reporte_Momo_${monthLabel.replace(/ /g,'_')}.pdf`,
+        image: { type: 'jpeg', quality: 0.95 },
+        html2canvas: { scale: 2, useCORS: true },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+      };
+
+      const originalApp = document.querySelector('.app');
+      const clone = originalApp.cloneNode(true);
+      clone.style.maxWidth = '1080px';
+      clone.querySelectorAll('.no-print').forEach(n => n.remove());
+      
+      // Clonar contenido de canvas (html2canvas lo necesita)
+      const origCanvases = originalApp.querySelectorAll('canvas');
+      const cloneCanvases = clone.querySelectorAll('canvas');
+      origCanvases.forEach((origCanvas, i) => {
+        cloneCanvases[i].getContext('2d').drawImage(origCanvas, 0, 0);
+      });
+
+      const wrapper = document.createElement('div');
+      wrapper.style.position = 'absolute';
+      wrapper.style.top = '0';
+      wrapper.style.left = '0';
+      wrapper.style.zIndex = '-9999';
+      wrapper.style.opacity = '0.001';
+      wrapper.style.pointerEvents = 'none';
+      wrapper.appendChild(clone);
+      document.body.appendChild(wrapper);
+
+      const pdfBlob = await html2pdf().set(opt).from(clone).outputPdf('blob');
+      sharedPdfFile = new File([pdfBlob], opt.filename, { type: 'application/pdf' });
+      
+      document.body.removeChild(wrapper);
+    } catch(e) {
+      console.error("Error pre-generating PDF", e);
+      sharedPdfFile = null;
+    }
+    isGeneratingPdf = false;
+  }
+
+  function triggerPdfPregen() {
+    sharedPdfFile = null;
+    clearTimeout(pdfGenTimer);
+    pdfGenTimer = setTimeout(pregeneratePdf, 1500); // Dar 1.5s para que termine la animación
+  }
 
   // Botón Compartir
   document.getElementById('share-btn').addEventListener('click', async (e) => {
@@ -1006,57 +1064,34 @@
         return;
       }
 
-      // Si ya tenemos el PDF generado (segundo toque), compartimos nativamente al instante
+      // Si tenemos el PDF pregenerado, compartimos nativamente al instante (1 solo toque)
       if (sharedPdfFile) {
         if (navigator.canShare && navigator.canShare({ files: [sharedPdfFile] })) {
           await navigator.share({ title: 'Reporte Momo Review', text: text + '\n' + url, files: [sharedPdfFile] });
         } else {
           await navigator.share({ title: 'Reporte Momo Review', text: text, url: url });
         }
-        // Reseteamos el estado
-        sharedPdfFile = null;
-        btn.innerHTML = defaultIcon;
-        btn.classList.remove('active');
         return;
       }
 
-      // Primer toque: Iniciar generación asíncrona del PDF
+      // Si el PDF no está listo aún (dio click antes de 1.5s), hacemos fallback al doble toque
       btn.innerHTML = `<span style="font-size:0.7rem;">Creando PDF...</span>`;
       btn.disabled = true;
       
-      const opt = {
-        margin: 10,
-        filename: `Reporte_Momo_${monthLabel.replace(/ /g,'_')}.pdf`,
-        image: { type: 'jpeg', quality: 0.95 },
-        html2canvas: { scale: 2, useCORS: true },
-        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-      };
+      // Forzar la pre-generación síncronamente
+      await pregeneratePdf();
       
-      const element = document.querySelector('.app');
-      const oldMaxWidth = element.style.maxWidth;
-      element.style.maxWidth = '1080px'; 
-      const noPrintNodes = document.querySelectorAll('.no-print');
-      noPrintNodes.forEach(n => n.style.display = 'none');
-      
-      const pdfBlob = await html2pdf().set(opt).from(element).outputPdf('blob');
-      sharedPdfFile = new File([pdfBlob], opt.filename, { type: 'application/pdf' });
-      
-      noPrintNodes.forEach(n => n.style.display = '');
-      element.style.maxWidth = oldMaxWidth;
-      
-      // Cambiar diseño del botón para indicar que está listo
       btn.disabled = false;
-      btn.classList.add('active'); // Usamos el color accent
-      btn.innerHTML = `<span style="font-size:0.75rem; font-weight:600;">¡Toca para enviar!</span>`;
-      
-      // Auto-resetear si el usuario no hace el segundo toque en 15 segundos
-      setTimeout(() => {
-        if (sharedPdfFile) {
-          sharedPdfFile = null;
+      if (sharedPdfFile) {
+        btn.classList.add('active');
+        btn.innerHTML = `<span style="font-size:0.75rem; font-weight:600;">¡Toca para enviar!</span>`;
+        setTimeout(() => {
           btn.innerHTML = defaultIcon;
           btn.classList.remove('active');
-        }
-      }, 15000);
+        }, 15000);
+      } else {
+        btn.innerHTML = defaultIcon;
+      }
 
     } catch (err) {
       console.error('Error al compartir:', err);
@@ -1064,7 +1099,6 @@
       btn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>`;
       btn.disabled = false;
       btn.classList.remove('active');
-      sharedPdfFile = null;
     }
   });
 
@@ -1074,6 +1108,7 @@
       tab.classList.add('active');
       activePeriod = tab.dataset.period;
       renderChart(activePeriod);
+      triggerPdfPregen();
     });
   });
 
