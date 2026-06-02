@@ -7,7 +7,8 @@
   <title>Reportes — Momo Review</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
   <style>
     :root {
       --bg: #fcfcfc;
@@ -995,65 +996,77 @@
       const select = document.getElementById('report-month');
       const monthLabel = select.options[select.selectedIndex].text;
       
-      const opt = {
-        margin: [15, 10, 15, 10],
-        filename: `Reporte_Momo_${monthLabel.replace(/ /g,'_')}.pdf`,
-        image: { type: 'jpeg', quality: 0.98 },
-        html2canvas: { scale: 2, useCORS: true },
-        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-        pagebreak: { mode: ['css', 'legacy'] }
-      };
-
-      const originalApp = document.querySelector('.app');
-      const originalPrintOnly = document.querySelector('.print-only');
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF('p', 'pt', 'a4');
+      const pageWidth = doc.internal.pageSize.getWidth();
       
-      const cloneWrapper = document.createElement('div');
-      cloneWrapper.style.maxWidth = '1080px';
-      cloneWrapper.style.margin = '0 auto';
-      cloneWrapper.style.backgroundColor = document.documentElement.getAttribute('data-theme') === 'dark' ? '#08080a' : '#fcfcfc';
-
-      const cloneApp = originalApp.cloneNode(true);
-      const clonePrintOnly = originalPrintOnly.cloneNode(true);
+      // Título
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(22);
+      doc.setTextColor(17, 24, 39);
+      doc.text('Reporte de Reseñas', 40, 50);
       
-      cloneWrapper.appendChild(cloneApp);
-      cloneWrapper.appendChild(clonePrintOnly);
-
-      // Simular CSS de @media print
-      cloneWrapper.querySelectorAll('.no-print, .header-actions, .period-tabs, .pagination, .category-tabs, .momo-grid').forEach(n => {
-        if(n) n.style.display = 'none';
-      });
-      if(clonePrintOnly) {
-        clonePrintOnly.style.display = 'block';
-        clonePrintOnly.style.padding = '10px 25px'; // Darle aire a la tabla de impresión
+      // Subtítulo
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(11);
+      doc.setTextColor(107, 114, 128);
+      doc.text(`${monthLabel} • Actualizado: ${new Date().toLocaleDateString('es-ES')}`, 40, 70);
+      
+      // KPIs
+      const totalMomo = document.getElementById('kpi-momo').textContent;
+      const avg = document.getElementById('kpi-avg').textContent.split(' ')[0];
+      const indirects = document.getElementById('kpi-indirect').textContent;
+      
+      doc.setFontSize(10);
+      doc.setTextColor(0);
+      doc.text(`Total Reseñas: ${totalMomo}`, 40, 100);
+      doc.text(`Valoración Media: ${avg}/5`, 200, 100);
+      doc.text(`Acompañantes: ${indirects}`, 360, 100);
+      
+      doc.setDrawColor(229, 231, 235);
+      doc.line(40, 115, pageWidth - 40, 115);
+      
+      // Gráfico incrustado
+      const chartCanvas = document.getElementById('trend-chart');
+      let startY = 135;
+      if (chartCanvas) {
+        // En Safari móvil el toDataURL a veces falla si el canvas es gigante, pero aquí el canvas real es pequeño
+        const chartImg = chartCanvas.toDataURL('image/png', 1.0);
+        const imgWidth = pageWidth - 80;
+        const imgHeight = (chartCanvas.height * imgWidth) / chartCanvas.width;
+        doc.addImage(chartImg, 'PNG', 40, startY, imgWidth, imgHeight);
+        startY += imgHeight + 30;
       }
       
-      const clonedHeader = cloneWrapper.querySelector('.header');
-      if (clonedHeader) {
-        clonedHeader.style.position = 'static';
-        clonedHeader.style.marginTop = '0';
-      }
+      // Tabla
+      const tableData = momoReviews.map(rev => {
+        const d = rev.scraped_at ? formatDateLabel(rev.scraped_at) : '';
+        const author = rev.author + (rev.isIndirect ? ' (Indirecta)' : '');
+        const stars = '★'.repeat(rev.rating) + '☆'.repeat(5 - rev.rating);
+        const text = rev.isIndirect && !rev.text ? 'Sin comentario' : rev.text;
+        return [d, author, stars, text];
+      });
       
-      // Clonar contenido de canvas (html2canvas lo necesita)
-      const origCanvases = originalApp.querySelectorAll('canvas');
-      const cloneCanvases = cloneWrapper.querySelectorAll('canvas');
-      origCanvases.forEach((origCanvas, i) => {
-        cloneCanvases[i].getContext('2d').drawImage(origCanvas, 0, 0);
+      doc.autoTable({
+        startY: startY,
+        head: [['FECHA', 'AUTOR', 'VALORACIÓN', 'COMENTARIO']],
+        body: tableData,
+        theme: 'plain',
+        styles: { fontSize: 8, cellPadding: 5, textColor: [17, 24, 39], lineColor: [229, 231, 235], lineWidth: 0.5 },
+        headStyles: { fillColor: [249, 250, 251], textColor: [75, 85, 99], fontStyle: 'bold' },
+        columnStyles: {
+            0: { cellWidth: 50 },
+            1: { cellWidth: 90 },
+            2: { cellWidth: 70 },
+            3: { cellWidth: 'auto' }
+        },
+        margin: { top: 40, left: 40, right: 40, bottom: 40 }
       });
 
-      const wrapper = document.createElement('div');
-      wrapper.style.position = 'absolute';
-      wrapper.style.top = '0';
-      wrapper.style.left = '0';
-      wrapper.style.zIndex = '-9999';
-      wrapper.style.opacity = '0.001';
-      wrapper.style.pointerEvents = 'none';
-      wrapper.appendChild(cloneWrapper);
-      document.body.appendChild(wrapper);
-
-      const pdfBlob = await html2pdf().set(opt).from(cloneWrapper).outputPdf('blob');
-      sharedPdfFile = new File([pdfBlob], opt.filename, { type: 'application/pdf' });
+      const pdfBlob = doc.output('blob');
+      const filename = `Reporte_Momo_${monthLabel.replace(/ /g,'_')}.pdf`;
+      sharedPdfFile = new File([pdfBlob], filename, { type: 'application/pdf' });
       
-      document.body.removeChild(wrapper);
     } catch(e) {
       console.error("Error pre-generating PDF", e);
       sharedPdfFile = null;
