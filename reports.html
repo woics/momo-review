@@ -239,6 +239,15 @@
       z-index: 10; font-weight: normal; text-align: left; letter-spacing: 0;
     }
     .info-icon-wrap:hover .tooltip { opacity: 1; transform: translateY(0); }
+    
+    /* Toast Notification */
+    .toast {
+      position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(100px);
+      background: var(--text); color: var(--bg); padding: 10px 20px; border-radius: 8px;
+      font-size: 0.8rem; font-weight: 500; opacity: 0; transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+      z-index: 9999; pointer-events: none; text-align: center; box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+    .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
 
     /* Print Styles Overrides */
     .print-only { display: none; }
@@ -286,6 +295,7 @@
   </script>
 </head>
 <body>
+  <div id="toast" class="toast">¡Resumen copiado para WhatsApp!</div>
 <div class="app">
 
   <!-- Header -->
@@ -978,7 +988,7 @@
     document.getElementById('momo-grid').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   };
   // ─── Exportar PDF y Copiar al Portapapeles ──────────────────────────────────
-  async function exportAndCopy() {
+  function exportAndCopy() {
     try {
       const select = document.getElementById('report-month');
       const monthLabel = select.options[select.selectedIndex].text;
@@ -994,31 +1004,46 @@
       const url = window.location.href;
       const fullText = text + '\n' + url;
       
-      if (navigator.clipboard && window.isSecureContext) {
-        await navigator.clipboard.writeText(fullText);
-      } else {
-        const textArea = document.createElement("textarea");
-        textArea.value = fullText;
-        textArea.style.position = "fixed";
-        textArea.style.left = "-9999px";
-        document.body.appendChild(textArea);
-        textArea.focus();
-        textArea.select();
-        document.execCommand('copy');
-        textArea.remove();
+      let success = false;
+      
+      // Fallback síncrono agresivo (funciona perfecto en móviles antes de window.print)
+      const textArea = document.createElement("textarea");
+      textArea.value = fullText;
+      textArea.style.position = "fixed";
+      textArea.style.left = "-9999px";
+      document.body.appendChild(textArea);
+      textArea.focus();
+      textArea.select();
+      
+      try {
+        success = document.execCommand('copy');
+      } catch (err) {
+        console.warn('execCommand falló', err);
+      }
+      textArea.remove();
+
+      if (!success && navigator.clipboard && window.isSecureContext) {
+         navigator.clipboard.writeText(fullText).catch(e => console.warn(e));
+         success = true;
       }
       
-      // Opcional: mostrar un pequeño feedback visual de que se ha copiado
-      console.log('Resumen copiado al portapapeles');
+      // Mostrar Toast visual
+      if (success) {
+        const toast = document.getElementById('toast');
+        if (toast) {
+          toast.classList.add('show');
+          setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+      }
     } catch (e) {
       console.warn('No se pudo copiar al portapapeles', e);
     }
     
-    // Iniciar el diálogo nativo de impresión/PDF del navegador con un pequeñísimo delay
-    // para evitar que el bloqueo del diálogo cancele la operación asíncrona del portapapeles en móviles.
+    // Iniciar el diálogo nativo de impresión/PDF del navegador con un delay
+    // para dar tiempo visual al toast y asegurar el portapapeles
     setTimeout(() => {
       window.print();
-    }, 400);
+    }, 600);
   }
 
   document.querySelectorAll('.period-tab').forEach(tab => {
