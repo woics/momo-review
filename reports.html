@@ -270,6 +270,7 @@
       .print-reviews-table th, .print-reviews-table td { border-bottom: 1px solid #e5e7eb; padding: 0.75rem 0.5rem; text-align: left; vertical-align: top; }
       .print-reviews-table th { font-weight: 600; color: #4b5563; text-transform: uppercase; letter-spacing: 0.05em; font-size: 0.65rem; }
       .print-reviews-table td { color: #111827; }
+      .print-reviews-table tr { page-break-inside: avoid; }
       .print-reviews-table a { color: #111827; text-decoration: none; }
       .print-reviews-table .stars-text { color: #d97706; font-family: monospace; letter-spacing: 1px; }
     }
@@ -995,11 +996,12 @@
       const monthLabel = select.options[select.selectedIndex].text;
       
       const opt = {
-        margin: 10,
+        margin: [15, 10, 15, 10],
         filename: `Reporte_Momo_${monthLabel.replace(/ /g,'_')}.pdf`,
-        image: { type: 'jpeg', quality: 0.95 },
-        html2canvas: { scale: 2, useCORS: true },
-        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+        image: { type: 'jpeg', quality: 1.0 },
+        html2canvas: { scale: 3, useCORS: true, letterRendering: true },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+        pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
       };
 
       const originalApp = document.querySelector('.app');
