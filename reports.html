@@ -979,8 +979,11 @@
     renderMomoGrid();
     document.getElementById('momo-grid').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   };
+  let sharedPdfFile = null;
+
   // Botón Compartir
-  document.getElementById('share-btn').addEventListener('click', async () => {
+  document.getElementById('share-btn').addEventListener('click', async (e) => {
+    const btn = e.currentTarget;
     try {
       const select = document.getElementById('report-month');
       const monthLabel = select.options[select.selectedIndex].text;
@@ -995,58 +998,73 @@
       const text = `Reporte de Reseñas: ${monthLabel}\nActualizado: ${new Date().toLocaleDateString('es-ES')}\n\nResumen:\n⭐ ${totalMomo} reseñas verificadas\n   - ${stars5} reseñas de 5 estrellas\n   - ${stars4} reseñas de 4 estrellas\n📈 Valoración media: ${avg}/5\n👥 ${indirects} opiniones de acompañantes\n\nDashboard interactivo:`;
       const url = window.location.href;
       
-      const btn = document.getElementById('share-btn');
-      const oldIcon = btn.innerHTML;
-      
-      // Attempt to share with PDF
-      if (navigator.share) {
-        btn.innerHTML = `<span style="font-size:0.7rem;">Creando PDF...</span>`;
-        btn.disabled = true;
-        
-        // Use html2pdf on the app container, ignoring .no-print
-        const opt = {
-          margin: 10,
-          filename: `Reporte_Momo_${monthLabel.replace(/ /g,'_')}.pdf`,
-          image: { type: 'jpeg', quality: 0.95 },
-          html2canvas: { scale: 2, useCORS: true },
-          jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-        };
-        
-        let pdfFile = null;
-        try {
-           const element = document.querySelector('.app');
-           // temporarily apply print-like styles for pdf generation
-           const oldMaxWidth = element.style.maxWidth;
-           element.style.maxWidth = '1080px'; 
-           const noPrintNodes = document.querySelectorAll('.no-print');
-           noPrintNodes.forEach(n => n.style.display = 'none');
-           
-           const pdfBlob = await html2pdf().set(opt).from(element).outputPdf('blob');
-           pdfFile = new File([pdfBlob], opt.filename, { type: 'application/pdf' });
-           
-           // restore
-           noPrintNodes.forEach(n => n.style.display = '');
-           element.style.maxWidth = oldMaxWidth;
-        } catch(e) { console.error('Error html2pdf:', e); }
-        
-        btn.innerHTML = oldIcon;
-        btn.disabled = false;
+      const defaultIcon = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>`;
 
-        if (pdfFile && navigator.canShare && navigator.canShare({ files: [pdfFile] })) {
-          await navigator.share({ title: 'Reporte Momo Review', text: text + '\n' + url, files: [pdfFile] });
-        } else {
-          // Fallback sin archivo
-          await navigator.share({ title: 'Reporte Momo Review', text: text, url: url });
-        }
-      } else {
+      if (!navigator.share) {
         await navigator.clipboard.writeText(text + '\n' + url);
         alert('Resumen copiado al portapapeles. ¡Puedes pegarlo en tu app de mensajes!');
+        return;
       }
+
+      // Si ya tenemos el PDF generado (segundo toque), compartimos nativamente al instante
+      if (sharedPdfFile) {
+        if (navigator.canShare && navigator.canShare({ files: [sharedPdfFile] })) {
+          await navigator.share({ title: 'Reporte Momo Review', text: text + '\n' + url, files: [sharedPdfFile] });
+        } else {
+          await navigator.share({ title: 'Reporte Momo Review', text: text, url: url });
+        }
+        // Reseteamos el estado
+        sharedPdfFile = null;
+        btn.innerHTML = defaultIcon;
+        btn.classList.remove('active');
+        return;
+      }
+
+      // Primer toque: Iniciar generación asíncrona del PDF
+      btn.innerHTML = `<span style="font-size:0.7rem;">Creando PDF...</span>`;
+      btn.disabled = true;
+      
+      const opt = {
+        margin: 10,
+        filename: `Reporte_Momo_${monthLabel.replace(/ /g,'_')}.pdf`,
+        image: { type: 'jpeg', quality: 0.95 },
+        html2canvas: { scale: 2, useCORS: true },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+      };
+      
+      const element = document.querySelector('.app');
+      const oldMaxWidth = element.style.maxWidth;
+      element.style.maxWidth = '1080px'; 
+      const noPrintNodes = document.querySelectorAll('.no-print');
+      noPrintNodes.forEach(n => n.style.display = 'none');
+      
+      const pdfBlob = await html2pdf().set(opt).from(element).outputPdf('blob');
+      sharedPdfFile = new File([pdfBlob], opt.filename, { type: 'application/pdf' });
+      
+      noPrintNodes.forEach(n => n.style.display = '');
+      element.style.maxWidth = oldMaxWidth;
+      
+      // Cambiar diseño del botón para indicar que está listo
+      btn.disabled = false;
+      btn.classList.add('active'); // Usamos el color accent
+      btn.innerHTML = `<span style="font-size:0.75rem; font-weight:600;">¡Toca para enviar!</span>`;
+      
+      // Auto-resetear si el usuario no hace el segundo toque en 15 segundos
+      setTimeout(() => {
+        if (sharedPdfFile) {
+          sharedPdfFile = null;
+          btn.innerHTML = defaultIcon;
+          btn.classList.remove('active');
+        }
+      }, 15000);
+
     } catch (err) {
       console.error('Error al compartir:', err);
       const btn = document.getElementById('share-btn');
       btn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>`;
       btn.disabled = false;
+      btn.classList.remove('active');
+      sharedPdfFile = null;
     }
   });
 
