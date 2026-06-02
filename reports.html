@@ -1105,6 +1105,11 @@
         return;
       }
 
+      // Siempre copiamos al portapapeles como respaldo (WhatsApp suele ignorar el texto cuando se envían archivos PDF)
+      try {
+        await navigator.clipboard.writeText(text + '\n' + url);
+      } catch(e) { console.warn('Clipboard write failed', e); }
+
       // Si tenemos el PDF pregenerado, compartimos nativamente al instante (1 solo toque)
       if (sharedPdfFile) {
         if (navigator.canShare && navigator.canShare({ files: [sharedPdfFile] })) {
