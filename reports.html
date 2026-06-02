@@ -78,6 +78,43 @@
     }
     .btn-primary svg { color: var(--bg); }
 
+    
+    /* New Layout CSS */
+    .title-section { margin-top: 1rem; margin-bottom: 2.5rem; }
+    .title-sup { color: var(--orange); font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.5rem; }
+    .title-main { font-size: 2.5rem; font-weight: 800; letter-spacing: -0.02em; margin-bottom: 0.5rem; color: var(--text); }
+    .title-sub { color: var(--muted); font-size: 1rem; max-width: 600px; line-height: 1.5; }
+    
+    .kpis-top { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; margin-bottom: 1.5rem; }
+    .kpi-box { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r); padding: 1.5rem; display: flex; flex-direction: column; gap: 8px; }
+    .kpi-title { font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted2); }
+    .kpi-val { font-size: 2.5rem; font-weight: 700; letter-spacing: -0.04em; color: var(--text); line-height: 1; margin: 0.25rem 0; font-family: ui-monospace, monospace; }
+    .kpi-val span { font-size: 1rem; color: var(--muted); font-weight: 500; letter-spacing: normal; }
+    .kpi-desc { font-size: 0.75rem; color: var(--muted); display: flex; align-items: center; gap: 4px; }
+    
+    .progress-bar-wrap { width: 100%; height: 6px; background: var(--surface2); border-radius: 3px; overflow: hidden; margin-top: auto; }
+    .progress-bar-fill { height: 100%; background: var(--green); transition: width 1s ease; }
+    
+    .badge-status { display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; border-radius: 12px; font-size: 0.65rem; font-weight: 600; text-transform: uppercase; }
+    .badge-status.success { background: rgba(16,185,129,0.1); color: var(--green); }
+    .badge-status.warning { background: rgba(245,158,11,0.1); color: var(--yellow); }
+    .badge-status.danger { background: rgba(239,68,68,0.1); color: var(--red); }
+    
+    .secondary-cards { display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 1rem; margin-bottom: 1.5rem; }
+    @media (max-width: 800px) { .secondary-cards { grid-template-columns: 1fr; } }
+    
+    .dist-row { display: flex; align-items: center; gap: 1rem; margin-bottom: 0.75rem; font-size: 0.8rem; color: var(--muted); }
+    .dist-label { width: 30px; }
+    .dist-bar-wrap { flex: 1; height: 8px; background: var(--surface2); border-radius: 4px; overflow: hidden; }
+    .dist-bar-fill { height: 100%; background: var(--yellow); }
+    .dist-val { width: 60px; text-align: right; font-weight: 600; color: var(--text); }
+    .dist-val span { color: var(--muted2); font-weight: 400; font-size: 0.7rem; }
+    
+    .toggle-btn { background: #111827; color: #fff; border: none; padding: 0.75rem 1.25rem; border-radius: 6px; font-weight: 600; cursor: pointer; transition: background 0.2s; display: inline-flex; align-items: center; gap: 8px; margin-top: 1rem; font-size: 0.85rem; }
+    html[data-theme="dark"] .toggle-btn { background: #f4f4f7; color: #08080a; }
+    .toggle-btn:hover { opacity: 0.9; }
+    .toggle-btn.active { background: var(--accent); color: #fff; }
+
     /* Cards */
     .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r); padding: 1.5rem; box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
     .card-title { font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); margin-bottom: 1.25rem; display: block; }
@@ -230,109 +267,104 @@
 <div class="app">
 
   <!-- Header -->
-  <div class="header">
-    <div class="header-left">
-      <a href="/" class="back-link no-print">
-        <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 12L6 8l4-4"/></svg>
-        Volver al asistente
-      </a>
-      <h1>Dashboard de Reportes</h1>
-      <p class="subtitle" id="report-subtitle">Cargando datos...</p>
+  <div class="header" style="display:flex; justify-content:space-between; align-items:center; border-bottom: 1px solid var(--border); padding-bottom: 1rem;">
+    <div style="display:flex; align-items:center; gap:0.5rem;">
+      <div style="width: 24px; height: 24px; background: linear-gradient(135deg, #ea580c, #f59e0b); border-radius: 6px;"></div>
+      <div style="font-weight: 700; font-size: 1.1rem; color: var(--text);">Momo <span style="font-weight: 400; color: var(--muted);">Review</span></div>
     </div>
-    <div class="header-actions no-print">
-      <button class="btn" id="theme-toggle" title="Alternar modo oscuro/claro">
+    <div style="font-size: 0.75rem; color: var(--muted); font-family: monospace;" id="last-updated">
+      Actualizado · cargando...
+    </div>
+  </div>
+
+  <div class="title-section" style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:1rem;">
+    <div>
+      <div class="title-sup" id="report-period">REPORTE DE RESEÑAS · MAYO 2026</div>
+      <h1 class="title-main">Resumen de desempeño</h1>
+      <p class="title-sub">Seguimiento de las reseñas de Google que mencionan a <strong>Momo</strong>, progreso frente a las metas del periodo y listado verificado de opiniones.</p>
+    </div>
+    <div class="header-actions no-print" style="margin-top:0.5rem;">
+      <a href="/" class="btn" title="Volver">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 12L6 8l4-4"/></svg>
+      </a>
+      <button class="btn" id="theme-toggle" title="Modo oscuro">
         <svg id="theme-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
       </button>
       <select id="report-month" class="btn" style="appearance: none; padding-right: 1rem; outline: none; background: var(--surface); color: var(--text);">
         <option value="all">Histórico Completo</option>
       </select>
-      <button class="btn" id="refresh-btn">
-        <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 8a6 6 0 11-1.2-3.6M14 2v4h-4"/></svg>
-        Actualizar
-      </button>
-      <button class="btn btn-primary" onclick="window.print()">
-        <svg width="13" height="13" viewBox="0 0 16 16" fill="currentColor"><path d="M4 2h8v4H4zM2 7h12a1 1 0 011 1v5H1V8a1 1 0 011-1zM4 11h8v3H4z"/></svg>
-        Exportar PDF
-      </button>
+      <button class="btn btn-primary" onclick="window.print()">Exportar PDF</button>
     </div>
   </div>
 
   <!-- KPIs -->
-  <div class="kpis">
-    <div class="kpi yellow">
-      <span class="kpi-label">Mencionan "Momo"</span>
-      <span class="kpi-num" id="kpi-momo">—</span>
-      <span class="kpi-sub">reseñas con mi nombre</span>
+  <div class="kpis-top">
+    <!-- Card 1 -->
+    <div class="kpi-box">
+      <div class="kpi-title">Reseñas con "Momo"</div>
+      <div class="kpi-val" id="kpi-momo">—</div>
+      <div class="kpi-desc" id="kpi-momo-desc">Este mes · — positivas (4-5★)</div>
     </div>
-    <div class="kpi green">
-      <span class="kpi-label">5 Estrellas</span>
-      <span class="kpi-num" id="kpi-five">—</span>
-      <span class="kpi-sub">reseñas excelentes</span>
-    </div>
-    <div class="kpi purple">
-      <span class="kpi-label">4 Estrellas</span>
-      <span class="kpi-num" id="kpi-four">—</span>
-      <span class="kpi-sub">reseñas muy buenas</span>
-    </div>
-    <div class="kpi blue" style="cursor:pointer; border-style:dashed;" id="kpi-indirect-card" title="Clic para incluir/excluir estas reseñas en los cálculos">
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: -10px;">
-        <span class="kpi-label">Mesa Compartida</span>
-        <input type="checkbox" id="toggle-indirect" class="toggle-switch" style="pointer-events:none;" title="Alternar mesa compartida">
+    <!-- Card 2 -->
+    <div class="kpi-box">
+      <div class="kpi-title">Valoración media</div>
+      <div class="kpi-val" id="kpi-avg">— <span>/ 5</span></div>
+      <div class="kpi-desc" style="color:var(--yellow); font-size:1rem; letter-spacing:2px; margin-top:auto;" id="kpi-stars">
+        ★★★★★ <span style="color:var(--muted); font-size:0.75rem; letter-spacing:normal; margin-left:6px;">excelente</span>
       </div>
-      <span class="kpi-num" id="kpi-indirect">—</span>
-      <div style="display:flex; justify-content:space-between; align-items:flex-end; gap:8px;">
-        <span class="kpi-sub" style="line-height:1.4; color:var(--muted2); font-size:0.7rem;">Reseñas de acompañantes en mi mesa.<br><strong style="color:var(--muted);">Clic para sumarlas a mis metas.</strong></span>
-        <div class="info-icon-wrap">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--muted2)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="12" cy="12" r="10"></circle>
-            <line x1="12" y1="16" x2="12" y2="12"></line>
-            <line x1="12" y1="8" x2="12.01" y2="8"></line>
-          </svg>
-          <div class="tooltip">Las reseñas de <strong>Mesa Compartida</strong> son aquellas que no incluyen mi nombre de forma explícita, pero que por su proximidad horaria sabemos que provienen de una mesa atendida por mí. Esta función suma esas valoraciones de 4-5 estrellas a mis metas.</div>
-        </div>
+    </div>
+    <!-- Card 3 -->
+    <div class="kpi-box">
+      <div class="kpi-title">Meta semanal</div>
+      <div style="display:flex; justify-content:space-between; align-items:baseline;">
+        <div class="kpi-val" id="weekly-current">— <span>/ 20-30</span></div>
       </div>
+      <div class="badge-status success" id="weekly-badge" style="width:fit-content; margin-bottom:8px;">● Lograda</div>
+      <div class="progress-bar-wrap"><div class="progress-bar-fill" id="weekly-bar" style="width:0%"></div></div>
+    </div>
+    <!-- Card 4 -->
+    <div class="kpi-box">
+      <div class="kpi-title">Meta mensual</div>
+      <div style="display:flex; justify-content:space-between; align-items:baseline;">
+        <div class="kpi-val" id="monthly-current">— <span>/ 80-120</span></div>
+      </div>
+      <div class="badge-status success" id="monthly-badge" style="width:fit-content; margin-bottom:8px;">● Lograda</div>
+      <div class="progress-bar-wrap"><div class="progress-bar-fill" id="monthly-bar" style="width:0%"></div></div>
     </div>
   </div>
 
-  <!-- Metas -->
-  <div>
-    <div class="card-title" style="padding-left:4px;margin-bottom:0.75rem;">🎯 Seguimiento de Metas</div>
-    <div class="goals">
-      <div class="goal-card" id="weekly-goal">
-        <div class="goal-header">
-          <span class="goal-title">Meta Semanal</span>
-          <span class="goal-badge" id="weekly-badge">—</span>
-        </div>
-        <div>
-          <div class="goal-numbers">
-            <span class="goal-current" id="weekly-current">—</span>
-            <span class="goal-target">/ 20–30 reseñas</span>
-          </div>
-          <div style="font-size:11px;color:var(--muted);margin-top:2px;">esta semana (lun–dom)</div>
-        </div>
-        <div class="progress-track">
-          <div class="progress-fill" id="weekly-bar" style="width:0%"></div>
-        </div>
-        <div class="goal-projection" id="weekly-proj">—</div>
+  <!-- Tarjetas Secundarias -->
+  <div class="secondary-cards">
+    <div class="kpi-box" style="justify-content:center;">
+      <div style="font-weight:700; color:var(--text); margin-bottom:2px; font-size:0.9rem;">Distribución de valoraciones</div>
+      <div class="kpi-desc" style="margin-bottom:1.5rem;" id="dist-subtitle">Sobre — reseñas con mención a "Momo"</div>
+      
+      <div class="dist-row">
+        <div class="dist-label">5 ★</div>
+        <div class="dist-bar-wrap"><div class="dist-bar-fill" id="bar-5" style="width:0%;"></div></div>
+        <div class="dist-val" id="val-5">—</div>
       </div>
-
-      <div class="goal-card" id="monthly-goal">
-        <div class="goal-header">
-          <span class="goal-title">Meta Mensual</span>
-          <span class="goal-badge" id="monthly-badge">—</span>
-        </div>
-        <div>
-          <div class="goal-numbers">
-            <span class="goal-current" id="monthly-current">—</span>
-            <span class="goal-target">/ 80–120 reseñas</span>
-          </div>
-          <div style="font-size:11px;color:var(--muted);margin-top:2px;">este mes</div>
-        </div>
-        <div class="progress-track">
-          <div class="progress-fill" id="monthly-bar" style="width:0%"></div>
-        </div>
-        <div class="goal-projection" id="monthly-proj">—</div>
+      <div class="dist-row">
+        <div class="dist-label">4 ★</div>
+        <div class="dist-bar-wrap"><div class="dist-bar-fill" id="bar-4" style="width:0%; opacity:0.6;"></div></div>
+        <div class="dist-val" id="val-4">—</div>
       </div>
+      <div class="dist-row">
+        <div class="dist-label">3 ★</div>
+        <div class="dist-bar-wrap"><div class="dist-bar-fill" id="bar-3" style="width:0%; opacity:0.3;"></div></div>
+        <div class="dist-val" id="val-3">—</div>
+      </div>
+    </div>
+    
+    <div class="kpi-box">
+      <div style="font-weight:700; color:var(--text); margin-bottom:2px; font-size:0.9rem;">Mesa compartida</div>
+      <div class="kpi-desc">Reseñas de acompañantes en mi mesa</div>
+      <div class="kpi-val" id="kpi-indirect" style="font-size:3rem; margin:1rem 0 0.5rem 0;">—</div>
+      <p style="font-size:0.75rem; color:var(--muted); line-height:1.5;">Opiniones de comensales sentados en mi mesa. Puedes sumarlas a tus metas del periodo.</p>
+      <button class="toggle-btn" id="btn-toggle-indirect">
+        Sumar a mis metas &rarr;
+      </button>
+      <input type="checkbox" id="toggle-indirect" style="display:none;">
     </div>
   </div>
 
@@ -457,17 +489,56 @@
 
   // ─── Renderizado de Datos ───────────────────────────────────────────────────
   function renderKPIs() {
-    document.getElementById('kpi-momo').textContent = momoReviews.length;
-    document.getElementById('kpi-five').textContent = momoReviews.filter(r => r.rating === 5).length;
-    document.getElementById('kpi-four').textContent = momoReviews.filter(r => r.rating === 4).length;
+    const totalMomo = momoReviews.length;
+    const count5 = momoReviews.filter(r => r.rating === 5).length;
+    const count4 = momoReviews.filter(r => r.rating === 4).length;
+    const count3 = momoReviews.filter(r => r.rating <= 3).length; // Agrupando 1-3
+    const positives = count5 + count4;
     
+    let avg = 0;
+    if (totalMomo > 0) {
+      const sum = momoReviews.reduce((acc, r) => acc + r.rating, 0);
+      avg = (sum / totalMomo).toFixed(2);
+    }
+    
+    document.getElementById('kpi-momo').textContent = totalMomo;
+    document.getElementById('kpi-momo-desc').textContent = `Este mes · ${positives} positivas (4-5★)`;
+    
+    document.getElementById('kpi-avg').innerHTML = `${avg} <span>/ 5</span>`;
+    const fullStars = Math.round(avg);
+    const starStr = '★'.repeat(fullStars) + '☆'.repeat(5 - fullStars);
+    let descStr = 'excelente';
+    if(avg < 4.5) descStr = 'muy buena';
+    if(avg < 4.0) descStr = 'buena';
+    document.getElementById('kpi-stars').innerHTML = `${starStr} <span style="color:var(--muted); font-size:0.75rem; letter-spacing:normal; margin-left:6px;">${descStr}</span>`;
+    
+    // Distribución
+    document.getElementById('dist-subtitle').textContent = `Sobre ${totalMomo} reseñas con mención a "Momo"`;
+    document.getElementById('bar-5').style.width = totalMomo > 0 ? (count5 / totalMomo * 100) + '%' : '0%';
+    document.getElementById('bar-4').style.width = totalMomo > 0 ? (count4 / totalMomo * 100) + '%' : '0%';
+    document.getElementById('bar-3').style.width = totalMomo > 0 ? (count3 / totalMomo * 100) + '%' : '0%';
+    
+    document.getElementById('val-5').innerHTML = `${count5} <span>· ${totalMomo > 0 ? Math.round(count5/totalMomo*100) : 0}%</span>`;
+    document.getElementById('val-4').innerHTML = `${count4} <span>· ${totalMomo > 0 ? Math.round(count4/totalMomo*100) : 0}%</span>`;
+    document.getElementById('val-3').innerHTML = `${count3} <span>· ${totalMomo > 0 ? Math.round(count3/totalMomo*100) : 0}%</span>`;
+    
+    // Indirectas
     const indirectCount = allReviews.filter(r => r.isIndirect).length;
     document.getElementById('kpi-indirect').textContent = indirectCount;
     
     const now = new Date();
-    document.getElementById('report-subtitle').textContent =
-      `Actualizado el ${now.toLocaleDateString('es-ES',{weekday:'long',year:'numeric',month:'long',day:'numeric'})}`;
+    document.getElementById('last-updated').textContent = `Actualizado · ${now.toLocaleDateString('es-ES',{weekday:'long',year:'numeric',month:'long',day:'numeric'})}`;
     document.getElementById('momo-badge').textContent = `${momoReviews.length} reseñas`;
+    
+    // Update Header Period Text
+    const val = document.getElementById('report-month').value;
+    if (val === 'all') {
+      document.getElementById('report-period').textContent = 'REPORTE DE RESEÑAS · HISTÓRICO COMPLETO';
+    } else {
+      const [m, y] = val.split('_').map(Number);
+      const mDate = new Date(y, m - 1, 1);
+      document.getElementById('report-period').textContent = `REPORTE DE RESEÑAS · ${mDate.toLocaleDateString('es-ES', {month:'long', year:'numeric'}).toUpperCase()}`;
+    }
   }
 
   // ─── Metas ──────────────────────────────────────────────────────────────────
@@ -479,88 +550,57 @@
     let monthCount = 0;
     
     if (val === 'all') {
-      monthCount = momoReviews.filter(r => r.scraped_at && isSameMonth(parseDate(r.scraped_at), now)).length;
-      daysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
-      dayOfMonth = now.getDate();
-      daysLeftMonth = daysInMonth - dayOfMonth;
+      monthCount = momoReviews.length;
+      isPastMonth = true;
     } else {
       const [m, y] = val.split('_').map(Number);
-      monthCount = momoReviews.length; // Usamos momoReviews en lugar de allReviews para respetar el switch
-      isPastMonth = (now.getMonth() + 1 !== m || now.getFullYear() !== y);
+      const isCurrentMonth = (m - 1 === now.getMonth() && y === now.getFullYear());
+      isPastMonth = !isCurrentMonth;
       
+      monthCount = momoReviews.length; // ya está filtrado por el mes
       daysInMonth = new Date(y, m, 0).getDate();
-      dayOfMonth = isPastMonth ? daysInMonth : now.getDate();
+      dayOfMonth = isCurrentMonth ? now.getDate() : daysInMonth;
       daysLeftMonth = daysInMonth - dayOfMonth;
     }
 
-    // Semanal
     let weekCount = 0;
     let daysLeftWeek = 0;
-    let dayOfWeek = now.getDay() === 0 ? 7 : now.getDay();
-
+    const dayOfWeek = now.getDay();
+    
     if (isPastMonth) {
-       // En un mes pasado, mostramos el promedio semanal del mes
        weekCount = Math.round(monthCount / 4);
        daysLeftWeek = 0;
-       dayOfWeek = 7;
     } else {
        weekCount = momoReviews.filter(r => r.scraped_at && isSameWeek(parseDate(r.scraped_at), now)).length;
-       daysLeftWeek = 7 - dayOfWeek;
+       daysLeftWeek = 7 - (dayOfWeek === 0 ? 7 : dayOfWeek);
     }
 
     const weekMin = 20, weekMax = 30;
     const weekPct = Math.min((weekCount / weekMax) * 100, 100);
-    const weekStatus = weekCount >= weekMin ? 'green' : weekCount >= 10 ? 'yellow' : 'red';
-    const weekLabels = { green: '🟢 En camino', yellow: '🟡 Ritmo lento', red: '🔴 En riesgo' };
+    const weekStatus = weekCount >= weekMin ? 'success' : weekCount >= 10 ? 'warning' : 'danger';
+    const weekLabels = { success: '● Lograda', warning: '● Ritmo lento', danger: '● En riesgo' };
     
     if (isPastMonth) {
-        weekLabels.green = '🟢 Meta lograda';
-        weekLabels.yellow = '🟡 Regular';
-        weekLabels.red = '🔴 No lograda';
+        weekLabels.warning = '● Regular';
+        weekLabels.danger = '● No lograda';
     }
 
-    const weekFills = { green: 'fill-green', yellow: 'fill-yellow', red: 'fill-red' };
-    const weekBadges = { green: 'badge-green', yellow: 'badge-yellow', red: 'badge-red' };
-
-    document.getElementById('weekly-current').textContent = weekCount;
+    document.getElementById('weekly-current').innerHTML = `${weekCount} <span>/ 20-30</span>`;
     document.getElementById('weekly-bar').style.width = weekPct + '%';
-    document.getElementById('weekly-bar').className = `progress-fill ${weekFills[weekStatus]}`;
+    document.getElementById('weekly-bar').style.background = weekStatus === 'success' ? 'var(--green)' : (weekStatus === 'warning' ? 'var(--yellow)' : 'var(--red)');
     document.getElementById('weekly-badge').textContent = weekLabels[weekStatus];
-    document.getElementById('weekly-badge').className = `goal-badge ${weekBadges[weekStatus]}`;
-
-    if (isPastMonth) {
-      document.getElementById('weekly-proj').innerHTML = `Promedio semanal del mes: <span>~${weekCount} reseñas</span>.`;
-    } else {
-      const dailyRate = dayOfWeek > 0 ? weekCount / dayOfWeek : 0;
-      const projWeek = Math.round(dailyRate * 7);
-      document.getElementById('weekly-proj').innerHTML = `A este ritmo terminarás la semana con <span>~${projWeek} reseñas</span>. Quedan ${daysLeftWeek} días.`;
-    }
+    document.getElementById('weekly-badge').className = `badge-status ${weekStatus}`;
 
     // Mensual
     const monthMin = 80, monthMax = 120;
     const monthPct = Math.min((monthCount / monthMax) * 100, 100);
-    const monthStatus = monthCount >= monthMin ? 'green' : monthCount >= 40 ? 'yellow' : 'red';
-    const mLabels = { green: '🟢 En camino', yellow: '🟡 Ritmo lento', red: '🔴 En riesgo' };
+    const monthStatus = monthCount >= monthMin ? 'success' : monthCount >= 40 ? 'warning' : 'danger';
     
-    if (isPastMonth) {
-        mLabels.green = '🟢 Meta lograda';
-        mLabels.yellow = '🟡 Regular';
-        mLabels.red = '🔴 No lograda';
-    }
-
-    document.getElementById('monthly-current').textContent = monthCount;
+    document.getElementById('monthly-current').innerHTML = `${monthCount} <span>/ 80-120</span>`;
     document.getElementById('monthly-bar').style.width = monthPct + '%';
-    document.getElementById('monthly-bar').className = `progress-fill ${weekFills[monthStatus]}`;
-    document.getElementById('monthly-badge').textContent = mLabels[monthStatus];
-    document.getElementById('monthly-badge').className = `goal-badge ${weekBadges[monthStatus]}`;
-
-    if (isPastMonth) {
-      document.getElementById('monthly-proj').innerHTML = `Mes cerrado con <span>${monthCount} reseñas totales</span>.`;
-    } else {
-      const dailyRateMonth = dayOfMonth > 0 ? monthCount / dayOfMonth : 0;
-      const projMonth = Math.round(dailyRateMonth * daysInMonth);
-      document.getElementById('monthly-proj').innerHTML = `Proyección fin de mes: <span>~${projMonth} reseñas</span>. Quedan ${daysLeftMonth} días.`;
-    }
+    document.getElementById('monthly-bar').style.background = monthStatus === 'success' ? 'var(--green)' : (monthStatus === 'warning' ? 'var(--yellow)' : 'var(--red)');
+    document.getElementById('monthly-badge').textContent = weekLabels[monthStatus]; // Same labels
+    document.getElementById('monthly-badge').className = `badge-status ${monthStatus}`;
   }
 
   // ─── Gráfico ─────────────────────────────────────────────────────────────────
@@ -760,6 +800,8 @@
     
     // Tabla de impresión (completa)
     if (printTableBody) {
+      const pc = document.getElementById('print-counter');
+      if(pc) pc.textContent = `${filteredReviews.length} / ${momoReviews.length}`;
       printTableBody.innerHTML = filteredReviews.map(rev => {
         const d = rev.scraped_at ? formatDateLabel(rev.scraped_at) : '';
         const stars = '★'.repeat(rev.rating) + '☆'.repeat(5 - rev.rating);
@@ -945,23 +987,25 @@
 
 <!-- Estructura para Impresión (Tabla de reseñas completa) -->
 <div class="print-only">
-  <div class="print-header">
-    <h2>Listado Completo de Reseñas ("Momo")</h2>
+  <div style="display:flex; justify-content:space-between; align-items:baseline; margin-top:2rem; padding-bottom:1rem; border-bottom:1px solid #e5e7eb; margin-bottom:1rem;">
+    <h2 style="font-size:1.1rem; font-weight:700; color:#111827;">Listado de reseñas</h2>
+    <div style="font-size:0.8rem; color:#6b7280;" id="print-counter">0 / 0</div>
   </div>
   <table class="print-reviews-table">
     <thead>
       <tr>
-        <th style="width: 15%;">Fecha</th>
-        <th style="width: 20%;">Autor</th>
-        <th style="width: 15%;">Estrellas</th>
-        <th style="width: 50%;">Comentario</th>
+        <th style="width: 12%;">FECHA</th>
+        <th style="width: 22%;">AUTOR</th>
+        <th style="width: 16%;">VALORACIÓN</th>
+        <th style="width: 50%;">COMENTARIO</th>
       </tr>
     </thead>
     <tbody id="print-momo-tbody">
-      <!-- Se llena dinámicamente en renderMomoGrid() -->
+      <!-- Se llena dinámicamente -->
     </tbody>
   </table>
 </div>
 
 </body>
 </html>
+
