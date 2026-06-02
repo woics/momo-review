@@ -225,6 +225,7 @@
     /* Print Styles Overrides */
     .print-only { display: none; }
     @media print {
+      @page { margin: 15mm; }
       .app { gap: 1.5rem; }
       .header-actions, .period-tabs, .pagination, .category-tabs, .momo-grid { display: none !important; }
       
@@ -357,14 +358,22 @@
     </div>
     
     <div class="kpi-box">
-      <div style="font-weight:700; color:var(--text); margin-bottom:2px; font-size:0.9rem;">Mesa compartida</div>
-      <div class="kpi-desc">Reseñas de acompañantes en mi mesa</div>
-      <div class="kpi-val" id="kpi-indirect" style="font-size:3rem; margin:1rem 0 0.5rem 0;">—</div>
-      <p style="font-size:0.75rem; color:var(--muted); line-height:1.5;">Opiniones de comensales sentados en mi mesa. Puedes sumarlas a tus metas del periodo.</p>
-      <button class="toggle-btn" id="btn-toggle-indirect">
-        Sumar a mis metas &rarr;
-      </button>
-      <input type="checkbox" id="toggle-indirect" style="display:none;">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+        <div>
+          <div style="font-weight:700; color:var(--text); margin-bottom:2px; font-size:0.9rem;">Mesa compartida</div>
+          <div class="kpi-desc">Reseñas de acompañantes en mi mesa</div>
+        </div>
+        <div class="info-icon-wrap">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--muted);"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+          <div class="tooltip">Las reseñas "indirectas" provienen de acompañantes que se sentaron contigo. Puedes optar por contarlas o no para tu meta del periodo.</div>
+        </div>
+      </div>
+      
+      <div style="display:flex; align-items:center; justify-content:space-between; margin:1rem 0 0.5rem 0;">
+        <div class="kpi-val" id="kpi-indirect" style="font-size:3rem; margin:0;">—</div>
+        <input type="checkbox" id="toggle-indirect" class="toggle-switch" title="Sumar/Restar a mis metas">
+      </div>
+      <p style="font-size:0.75rem; color:var(--muted); line-height:1.5; margin-top:auto;">Sumar estas opiniones a mis metas del periodo actual.</p>
     </div>
   </div>
 
@@ -899,21 +908,9 @@
   }
 
   document.getElementById('report-month').addEventListener('change', applyMonthFilter);
-  const btnToggle = document.getElementById('btn-toggle-indirect');
   const chkToggle = document.getElementById('toggle-indirect');
-  
-  if (btnToggle && chkToggle) {
-    btnToggle.addEventListener('click', () => {
-      chkToggle.checked = !chkToggle.checked;
-      if (chkToggle.checked) {
-        btnToggle.classList.add('active');
-        btnToggle.innerHTML = 'Restar de mis metas &larr;';
-      } else {
-        btnToggle.classList.remove('active');
-        btnToggle.innerHTML = 'Sumar a mis metas &rarr;';
-      }
-      applyMonthFilter();
-    });
+  if (chkToggle) {
+    chkToggle.addEventListener('change', applyMonthFilter);
   }
 
   // ─── Carga principal ─────────────────────────────────────────────────────────
