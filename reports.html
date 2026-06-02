@@ -267,12 +267,12 @@
       .print-header h2 { font-size: 1.25rem; font-weight: 600; color: #111827; }
       
       .print-reviews-table { width: 100%; border-collapse: collapse; font-size: 0.75rem; }
-      .print-reviews-table th, .print-reviews-table td { border-bottom: 1px solid #e5e7eb; padding: 0.75rem 0.5rem; text-align: left; vertical-align: top; }
-      .print-reviews-table th { font-weight: 600; color: #4b5563; text-transform: uppercase; letter-spacing: 0.05em; font-size: 0.65rem; }
-      .print-reviews-table td { color: #111827; }
+      .print-reviews-table th, .print-reviews-table td { border-bottom: 1px solid var(--border); padding: 0.75rem 0.5rem; text-align: left; vertical-align: top; }
+      .print-reviews-table th { font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; font-size: 0.65rem; }
+      .print-reviews-table td { color: var(--text); }
       .print-reviews-table tr { page-break-inside: avoid; }
-      .print-reviews-table a { color: #111827; text-decoration: none; }
-      .print-reviews-table .stars-text { color: #d97706; font-family: monospace; letter-spacing: 1px; }
+      .print-reviews-table a { color: var(--text); text-decoration: none; }
+      .print-reviews-table .stars-text { color: var(--yellow); font-family: monospace; letter-spacing: 1px; }
     }
   </style>
   <script>
@@ -1022,7 +1022,10 @@
       cloneWrapper.querySelectorAll('.no-print, .header-actions, .period-tabs, .pagination, .category-tabs, .momo-grid').forEach(n => {
         if(n) n.style.display = 'none';
       });
-      if(clonePrintOnly) clonePrintOnly.style.display = 'block';
+      if(clonePrintOnly) {
+        clonePrintOnly.style.display = 'block';
+        clonePrintOnly.style.padding = '10px 25px'; // Darle aire a la tabla de impresión
+      }
       
       const clonedHeader = cloneWrapper.querySelector('.header');
       if (clonedHeader) {
@@ -1169,6 +1172,7 @@
     if(trendChart) {
         renderChart(activePeriod); // Re-renderizar chart para aplicar nuevos colores
     }
+    if(typeof triggerPdfPregen === 'function') triggerPdfPregen();
   });
   updateThemeIcon();
 
