@@ -4,11 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="robots" content="noindex, nofollow">
-  <title>Reportes — Momo Review</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
   <style>
     :root {
       --bg: #fcfcfc;
@@ -305,9 +301,6 @@
       </div>
       
       <div class="header-actions no-print">
-        <button class="btn" id="share-btn" title="Compartir Reporte">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>
-        </button>
         <button class="btn" id="theme-toggle" title="Modo oscuro">
           <svg id="theme-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
         </button>
@@ -984,105 +977,8 @@
     renderMomoGrid();
     document.getElementById('momo-grid').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   };
-  // --- PRE-GENERACIÓN DE PDF PARA COMPARTIR EN 1 TOQUE ---
-  let sharedPdfFile = null;
-  let pdfGenTimer = null;
-  let isGeneratingPdf = false;
-
-  async function pregeneratePdf() {
-    if (isGeneratingPdf) return;
-    isGeneratingPdf = true;
-    try {
-      const select = document.getElementById('report-month');
-      const monthLabel = select.options[select.selectedIndex].text;
-      
-      const { jsPDF } = window.jspdf;
-      const doc = new jsPDF('p', 'pt', 'a4');
-      const pageWidth = doc.internal.pageSize.getWidth();
-      
-      // Título
-      doc.setFont("helvetica", "bold");
-      doc.setFontSize(22);
-      doc.setTextColor(17, 24, 39);
-      doc.text('Reporte de Reseñas', 40, 50);
-      
-      // Subtítulo
-      doc.setFont("helvetica", "normal");
-      doc.setFontSize(11);
-      doc.setTextColor(107, 114, 128);
-      doc.text(`${monthLabel} • Actualizado: ${new Date().toLocaleDateString('es-ES')}`, 40, 70);
-      
-      // KPIs
-      const totalMomo = document.getElementById('kpi-momo').textContent;
-      const avg = document.getElementById('kpi-avg').textContent.split(' ')[0];
-      const indirects = document.getElementById('kpi-indirect').textContent;
-      
-      doc.setFontSize(10);
-      doc.setTextColor(0);
-      doc.text(`Total Reseñas: ${totalMomo}`, 40, 100);
-      doc.text(`Valoración Media: ${avg}/5`, 200, 100);
-      doc.text(`Acompañantes: ${indirects}`, 360, 100);
-      
-      doc.setDrawColor(229, 231, 235);
-      doc.line(40, 115, pageWidth - 40, 115);
-      
-      // Gráfico incrustado
-      const chartCanvas = document.getElementById('trend-chart');
-      let startY = 135;
-      if (chartCanvas) {
-        // En Safari móvil el toDataURL a veces falla si el canvas es gigante, pero aquí el canvas real es pequeño
-        const chartImg = chartCanvas.toDataURL('image/png', 1.0);
-        const imgWidth = pageWidth - 80;
-        const imgHeight = (chartCanvas.height * imgWidth) / chartCanvas.width;
-        doc.addImage(chartImg, 'PNG', 40, startY, imgWidth, imgHeight);
-        startY += imgHeight + 30;
-      }
-      
-      // Tabla
-      const tableData = momoReviews.map(rev => {
-        const d = rev.scraped_at ? formatDateLabel(rev.scraped_at) : '';
-        const author = rev.author + (rev.isIndirect ? ' (Indirecta)' : '');
-        const stars = '★'.repeat(rev.rating) + '☆'.repeat(5 - rev.rating);
-        const text = rev.isIndirect && !rev.text ? 'Sin comentario' : rev.text;
-        return [d, author, stars, text];
-      });
-      
-      doc.autoTable({
-        startY: startY,
-        head: [['FECHA', 'AUTOR', 'VALORACIÓN', 'COMENTARIO']],
-        body: tableData,
-        theme: 'plain',
-        styles: { fontSize: 8, cellPadding: 5, textColor: [17, 24, 39], lineColor: [229, 231, 235], lineWidth: 0.5 },
-        headStyles: { fillColor: [249, 250, 251], textColor: [75, 85, 99], fontStyle: 'bold' },
-        columnStyles: {
-            0: { cellWidth: 50 },
-            1: { cellWidth: 90 },
-            2: { cellWidth: 70 },
-            3: { cellWidth: 'auto' }
-        },
-        margin: { top: 40, left: 40, right: 40, bottom: 40 }
-      });
-
-      const pdfBlob = doc.output('blob');
-      const filename = `Reporte_Momo_${monthLabel.replace(/ /g,'_')}.pdf`;
-      sharedPdfFile = new File([pdfBlob], filename, { type: 'application/pdf' });
-      
-    } catch(e) {
-      console.error("Error pre-generating PDF", e);
-      sharedPdfFile = null;
-    }
-    isGeneratingPdf = false;
-  }
-
-  function triggerPdfPregen() {
-    sharedPdfFile = null;
-    clearTimeout(pdfGenTimer);
-    pdfGenTimer = setTimeout(pregeneratePdf, 1500); // Dar 1.5s para que termine la animación
-  }
-
-  // Botón Compartir
-  document.getElementById('share-btn').addEventListener('click', async (e) => {
-    const btn = e.currentTarget;
+  // ─── Exportar PDF y Copiar al Portapapeles ──────────────────────────────────
+  async function exportAndCopy() {
     try {
       const select = document.getElementById('report-month');
       const monthLabel = select.options[select.selectedIndex].text;
@@ -1097,56 +993,16 @@
       const text = `Reporte de Reseñas: ${monthLabel}\nActualizado: ${new Date().toLocaleDateString('es-ES')}\n\nResumen:\n⭐ ${totalMomo} reseñas verificadas\n   - ${stars5} reseñas de 5 estrellas\n   - ${stars4} reseñas de 4 estrellas\n📈 Valoración media: ${avg}/5\n👥 ${indirects} opiniones de acompañantes adicionales\n\n🎯 Objetivo de reseñas para bono alcanzado.\n\nMira el reporte completo aquí:`;
       const url = window.location.href;
       
-      const defaultIcon = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>`;
-
-      if (!navigator.share) {
-        await navigator.clipboard.writeText(text + '\n' + url);
-        alert('Resumen copiado al portapapeles. ¡Puedes pegarlo en tu app de mensajes!');
-        return;
-      }
-
-      // Siempre copiamos al portapapeles como respaldo (WhatsApp suele ignorar el texto cuando se envían archivos PDF)
-      try {
-        await navigator.clipboard.writeText(text + '\n' + url);
-      } catch(e) { console.warn('Clipboard write failed', e); }
-
-      // Si tenemos el PDF pregenerado, compartimos nativamente al instante (1 solo toque)
-      if (sharedPdfFile) {
-        if (navigator.canShare && navigator.canShare({ files: [sharedPdfFile] })) {
-          await navigator.share({ title: 'Reporte Momo Review', text: text + '\n' + url, files: [sharedPdfFile] });
-        } else {
-          await navigator.share({ title: 'Reporte Momo Review', text: text, url: url });
-        }
-        return;
-      }
-
-      // Si el PDF no está listo aún (dio click antes de 1.5s), hacemos fallback al doble toque
-      btn.innerHTML = `<span style="font-size:0.7rem;">Creando PDF...</span>`;
-      btn.disabled = true;
-      
-      // Forzar la pre-generación síncronamente
-      await pregeneratePdf();
-      
-      btn.disabled = false;
-      if (sharedPdfFile) {
-        btn.classList.add('active');
-        btn.innerHTML = `<span style="font-size:0.75rem; font-weight:600;">¡Toca para enviar!</span>`;
-        setTimeout(() => {
-          btn.innerHTML = defaultIcon;
-          btn.classList.remove('active');
-        }, 15000);
-      } else {
-        btn.innerHTML = defaultIcon;
-      }
-
-    } catch (err) {
-      console.error('Error al compartir:', err);
-      const btn = document.getElementById('share-btn');
-      btn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>`;
-      btn.disabled = false;
-      btn.classList.remove('active');
+      await navigator.clipboard.writeText(text + '\n' + url);
+      // Opcional: mostrar un pequeño feedback visual de que se ha copiado
+      console.log('Resumen copiado al portapapeles');
+    } catch (e) {
+      console.warn('No se pudo copiar al portapapeles', e);
     }
-  });
+    
+    // Iniciar el diálogo nativo de impresión/PDF del navegador
+    window.print();
+  }
 
   document.querySelectorAll('.period-tab').forEach(tab => {
     tab.addEventListener('click', () => {
@@ -1190,7 +1046,6 @@
     if(trendChart) {
         renderChart(activePeriod); // Re-renderizar chart para aplicar nuevos colores
     }
-    if(typeof triggerPdfPregen === 'function') triggerPdfPregen();
   });
   updateThemeIcon();
 
